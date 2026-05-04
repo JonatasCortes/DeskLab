@@ -1,2 +1,2 @@
-# FrontPy
-A lightweight, ready-to-use Python interface library designed for small projects that prioritize rapid development over extensive customization.
+# LabWeb
+A lightweight, ready-to-use Python interface library designed for small projects that prioritize fast development over extensive customization. It simulates the web development programing style, with separation of responsibilities and reusable components.
