@@ -2,9 +2,8 @@ from pygame.event import Event
 from src.labweb.color import Color
 from typing import Any, Union
 from src.labweb.constants import VerticalAlignment, HorizontalAlignment, FlexDirection
-from src.labweb.mouse import Mouse
+from labweb.system_input.mouse import Mouse
 from src.labweb.containers.flexbox import FlexBox
-from src.labweb.entities import CopiableEntity
 
 
 class HoverEmphasizingFlexBox(FlexBox):
@@ -65,9 +64,5 @@ class HoverEmphasizingFlexBox(FlexBox):
                                       self.get_flex_direction(), self.get_horizontal_alignment(),
                                       self.get_vertical_alignment(), self.get_corners_radius(),
                                       self.get_color(), self.get_emphasis_intensity(), self.is_bounded())
-        for children in self._get_children():
-            if isinstance(children, CopiableEntity):
-                new_instance._add(children.copy())
-            else:
-                new_instance._add(children)
+        self._migrate_children(new_instance)
         return new_instance

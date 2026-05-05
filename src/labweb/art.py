@@ -1,5 +1,5 @@
 from typing import Any
-from src.labweb.mouse import Mouse
+from labweb.system_input.mouse import Mouse
 from src.labweb.color import Color
 from src.labweb.area import RectangularArea
 from pygame.event import Event

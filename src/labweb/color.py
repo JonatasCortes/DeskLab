@@ -8,9 +8,11 @@ class Color:
         self.__set_color(color)
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, Color):
-            return NotImplemented
-        return self.get() == other.get()
+        if isinstance(other, self.__class__):
+            return self.get() == other.get()
+        elif isinstance(other, str):
+            return self == self.__class__(other)
+        return NotImplemented
 
     def copy(self) -> "Color":
         return self.__class__(self.get())

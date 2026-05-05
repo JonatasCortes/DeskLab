@@ -54,10 +54,9 @@ class FlexSlot(FlexContainerInterface):
                                   self.get_corners_radius(),
                                   self.get_color(), self.is_bounded())
         child = self.get_child()
-        assert child
         if isinstance(child, CopiableEntity):
             new_slot.set_child(child.copy())
-        else:
+        elif child:
             new_slot.set_child(child)
         return new_slot
 

@@ -4,7 +4,8 @@ from pygame.locals import QUIT
 from src.labweb.color import Color
 from src.labweb.containers.flexbox import FlexBox
 from src.labweb.constants import FlexDirection, HorizontalAlignment, VerticalAlignment
-from src.labweb.mouse import Mouse
+from src.labweb.system_input.mouse import Mouse
+from src.labweb.system_input.keyboard import KeyBoard
 from pygame._sdl2 import Window as PygameWindow
 import pygame
 import sys
@@ -49,18 +50,21 @@ class Window(FlexBox):
     def open(self) -> None:
 
         mouse = Mouse()
+        keyboard = KeyBoard()
 
         self.__running = True
         while self.__running:
 
             for event in pygame.event.get():
 
+                keyboard.update_event(event)
                 mouse.update_event(event)
                 mouse.update_refference_origin(*self.get_window_coordinates())
 
                 if event.type == QUIT:
                     sys.exit()
                 self.handle_event(event, mouse=mouse,
+                                  keyboard=keyboard,
                                   screen=self.__screen)
 
             self.__screen.fill((0, 0, 0))

@@ -108,12 +108,15 @@ class FlexContainerInterface(RectangularArea, EventSensitiveEntity):
             color=self.get_color(),
             bounded=self._is_bounded()
         )
+        self._migrate_children(new_container)
+        return new_container
+
+    def _migrate_children(self, new_instance: "FlexContainerInterface") -> None:
         for children in self._get_children():
             if isinstance(children, CopiableEntity):
-                new_container._add(children.copy())
+                new_instance._add(children.copy())
             else:
-                new_container._add(children)
-        return new_container
+                new_instance._add(children)
 
     def _remove(self, entity: Entity) -> None:
         self.__children.remove(entity)

@@ -10,8 +10,8 @@ class EventListener(EventSensitiveEntity):
         self.set_condition(condition)
 
     def handle_event(self, event: Event, *args: Any, **kwargs: Any) -> None:
-        if self._trigger_condition():
-            self._trigger_actions()
+        if self._trigger_condition(*args, **kwargs, event=event):
+            self._trigger_actions(*args, **kwargs, event=event)
 
     def get_condition(self) -> Callable[..., bool]:
         return self.__condition
@@ -28,12 +28,19 @@ class EventListener(EventSensitiveEntity):
             return
         self.__action: list[Callable[..., Any]] = [action]
 
-    def _trigger_condition(self) -> bool:
-        return self.get_condition()()
+    def _trigger_condition(self, *args: Any, **kwargs: Any) -> bool:
+        condition = self.get_condition()
+        try:
+            return condition(*args, **kwargs)
+        except TypeError:
+            return condition()
 
-    def _trigger_actions(self) -> None:
+    def _trigger_actions(self, *args: Any, **kwargs: Any) -> None:
         for action in self.get_actions():
-            action()
+            try:
+                action(*args, **kwargs)
+            except TypeError:
+                return action()
 
 
 class FirstTimeEventListener(EventListener):

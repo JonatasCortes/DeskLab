@@ -18,7 +18,8 @@ class Area(ContainableEntity, DisplayableEntity, ColorableEntity, CopiableEntity
         return (self.get_x(), self.get_y(),
                 self.get_width(), self.get_height())
 
-    def set_color(self, color: Color) -> None: self._set_color(color)
+    def set_color(self, color: Color | tuple[int, ...] | str) -> None:
+        self._set_color(color)
 
 
 class RectangularArea(Area):
