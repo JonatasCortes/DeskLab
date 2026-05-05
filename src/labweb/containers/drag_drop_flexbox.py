@@ -4,7 +4,6 @@ from pygame.event import Event
 from typing import Any
 from src.labweb.constants import FlexDirection, HorizontalAlignment, VerticalAlignment
 from src.labweb.color import Color
-from src.labweb.entities import CopiableEntity
 
 
 class DragDropFlexBox(HoverEmphasizingFlexBox):
@@ -19,12 +18,13 @@ class DragDropFlexBox(HoverEmphasizingFlexBox):
                  vertical_alignment: str | VerticalAlignment = VerticalAlignment.CENTER,
                  corners_radius: tuple[int, int, int, int] | int = 0,
                  color: Color | tuple[int, int, int] | str = "BLACK",
+                 hover_emphasis_intensity: int = 20,
                  bounded: bool = True) -> None:
 
         self.__files: list[str] = []
         super().__init__(width, height, padding, space_between, flex_direction,
                          horizontal_alignment, vertical_alignment, corners_radius,
-                         color, 20, bounded)
+                         color, hover_emphasis_intensity, bounded)
 
     def handle_event(self, event: Event, *args: Any, **kwargs: Any) -> None:
         mouse = kwargs.get("mouse")
@@ -57,13 +57,6 @@ class DragDropFlexBox(HoverEmphasizingFlexBox):
         return len(self.__files)
 
     def copy(self) -> "DragDropFlexBox":
-        new_instance = self.__class__(self.get_width(), self.get_height(), self.get_padding(),
-                                      self.get_space_between(), self.get_flex_direction(),
-                                      self.get_horizontal_alignment(), self.get_vertical_alignment(),
-                                      self.get_corners_radius(), self.get_color(), self.is_bounded())
-        for children in self._get_children():
-            if isinstance(children, CopiableEntity):
-                new_instance._add(children.copy())
-            else:
-                new_instance._add(children)
-        return new_instance
+        instance = self._copy()
+        assert isinstance(instance, self.__class__)
+        return instance
