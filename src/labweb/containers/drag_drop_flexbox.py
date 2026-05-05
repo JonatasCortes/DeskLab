@@ -1,5 +1,5 @@
 from src.labweb.containers.hover_emphasizing_flexbox import HoverEmphasizingFlexBox
-from labweb.system_input.mouse import Mouse
+from src.labweb.system_input.mouse import Mouse
 from pygame.event import Event
 from typing import Any
 from src.labweb.constants import FlexDirection, HorizontalAlignment, VerticalAlignment

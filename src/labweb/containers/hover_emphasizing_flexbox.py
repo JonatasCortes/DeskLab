@@ -2,7 +2,7 @@ from pygame.event import Event
 from src.labweb.color import Color
 from typing import Any, Union
 from src.labweb.constants import VerticalAlignment, HorizontalAlignment, FlexDirection
-from labweb.system_input.mouse import Mouse
+from src.labweb.system_input.mouse import Mouse
 from src.labweb.containers.flexbox import FlexBox
 
 
