@@ -3,7 +3,6 @@ from src.labweb.constants import FlexDirection, HorizontalAlignment, VerticalAli
 from src.labweb.containers.clickable_flexbox import ClickableFlexBox
 from src.labweb.color import Color
 from pygame.event import Event
-from labweb.system_input.mouse import Mouse
 
 
 class Button(ClickableFlexBox):
@@ -30,7 +29,7 @@ class Button(ClickableFlexBox):
         self.__actions: list[Callable[..., Any]] = []
         self.add_actions(actions)
 
-    def __add_click_listener(self, mouse: Mouse):
+    def __add_click_listener(self):
         if self.is_clicked():
             for action in self.get_actions():
                 action()
@@ -45,12 +44,8 @@ class Button(ClickableFlexBox):
         return self.__actions
 
     def handle_event(self, event: Event, *args: Any, **kwargs: Any) -> None:
-        mouse = kwargs.get("mouse")
-        if not isinstance(mouse, Mouse):
-            error = "Expected a Mouse instance in kwargs with key 'mouse'"
-            raise ValueError(error)
-        self.__add_click_listener(mouse)
         super().handle_event(event, *args, **kwargs)
+        self.__add_click_listener()
 
     def copy(self) -> "Button":
         new_instance = self.__class__(self.get_width(), self.get_height(), self.get_actions(),
