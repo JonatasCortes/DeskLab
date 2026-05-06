@@ -1,19 +1,17 @@
 from src.labweb.color import Color
-from src.labweb.entities import DefaultEntity
+from src.labweb.entities import DisplayableEntity, ContainableEntity, ColorableEntity, CopiableEntity
 import pygame
 from pygame import Surface
-from pygame.event import Event
-from typing import Any
 
 
-class Text(DefaultEntity):
+class Text(DisplayableEntity, ContainableEntity, ColorableEntity, CopiableEntity):
 
     def __init__(self, text: str, size: int = 25, color: Color | tuple[int, ...] | str = "WHITE"):
 
         self.set_text(text)
         self.set_size(size)
         width, height = self.__get_dimensions()
-        super().__init__(0, 0, width, height, color)
+        super().__init__(x=0, y=0, width=width, height=height, color=color)
 
     def set_text(self, text: str) -> None:
         self.__text = text
@@ -68,9 +66,6 @@ class Text(DefaultEntity):
                                                   self.get_y()))
 
         screen.blit(text_surface, text_rect)
-
-    def handle_event(self, event: Event, *args: Any, **kwargs: Any) -> None:
-        pass
 
     def is_empty(self) -> bool:
         return self.get_text() == ""
