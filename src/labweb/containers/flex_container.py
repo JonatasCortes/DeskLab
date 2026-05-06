@@ -45,7 +45,7 @@ class FlexContainer(FlexContainerInterface):
                     if isinstance(c, ContainableEntity)), default=0)
 
     def __calculate_total_space_between(self) -> int:
-        return self._get_space_between() * (self._length() - 1)
+        return self._get_space_between() * (self._count_containable_children() - 1)
 
     def __validate_bounds(self, main_sum: int, secondary_max: int, total_space_between: int) -> None:
         padding = self._get_padding()

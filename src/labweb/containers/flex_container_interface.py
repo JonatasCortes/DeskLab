@@ -1,6 +1,5 @@
-from pygame.event import Event
 from src.labweb.color import Color
-from src.labweb.entities import Entity, DisplayableEntity, EventSensitiveEntity, CopiableEntity
+from src.labweb.entities import ContainableEntity, Entity, DisplayableEntity, EventSensitiveEntity, CopiableEntity
 from src.labweb.area import RectangularArea
 from pygame import Surface
 from typing import Any, Optional, Union
@@ -75,10 +74,10 @@ class FlexContainerInterface(RectangularArea, EventSensitiveEntity):
             if isinstance(child, DisplayableEntity):
                 child.display(screen)
 
-    def handle_event(self, event: Event, *args: Any, **kwargs: Any) -> None:
+    def handle_event(self, *args: Any, **kwargs: Any) -> None:
         for child in self._get_children():
             if isinstance(child, EventSensitiveEntity):
-                child.handle_event(event, *args, **kwargs)
+                child.handle_event(*args, **kwargs)
 
     def _add(self, entity: Union[Entity, list[Entity]]) -> None:
         if isinstance(entity, list):
@@ -135,6 +134,13 @@ class FlexContainerInterface(RectangularArea, EventSensitiveEntity):
 
     def _length(self) -> int:
         return len(self.__children)
+
+    def _count_containable_children(self) -> int:
+        count = 0
+        for c in self._get_children():
+            if isinstance(c, ContainableEntity):
+                count += 1
+        return count
 
     def _is_empty(self) -> bool:
         return not self.__children
