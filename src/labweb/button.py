@@ -51,6 +51,6 @@ class Button(ClickableFlexBox):
                                       self.get_padding(), self.get_space_between(),
                                       self.get_flex_direction(), self.get_horizontal_alignment(),
                                       self.get_vertical_alignment(), self.get_corners_radius(),
-                                      self.get_color(), self.is_bounded())
+                                      self.get_color(), self.get_emphasis_intensity(), self.is_bounded())
         self._migrate_children(new_instance)
         return new_instance
