@@ -56,8 +56,10 @@ class KeyBoard(Entity):
         self.__mod: int = 0
         self.__key_mapper = _PygameKeyMapper()
 
-    def update_event(self, event: Event):
+    def update_event(self, event: Optional[Event]):
         self.__event = event
+        if not event:
+            return
 
         if event.type == KEYDOWN:
             self.__mod = event.mod

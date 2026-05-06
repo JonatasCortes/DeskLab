@@ -20,7 +20,7 @@ class Mouse(Entity):
             return True
         return False
 
-    def update_event(self, event: Event):
+    def update_event(self, event: Optional[Event]):
         self.__event = event
         if self.is_clicked():
             self.__is_held = True
