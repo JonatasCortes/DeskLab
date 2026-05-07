@@ -1,4 +1,5 @@
-from typing import Any
+from typing import Any, Optional
+from src.labweb.entities import Entity
 from src.labweb.text import Text
 from src.labweb.color import Color
 from src.labweb.containers.protected_flexslot import ProtectedFlexSlot
@@ -10,11 +11,11 @@ from src.labweb.system_input.keyboard import KeyBoard
 
 class _TextInputCell(ClickableFlexBox):
 
-    def __init__(self, value: str | Text, height: int, background_color: Color | tuple[int, int, int] | str, text_color: Color | tuple[int, int, int] | str) -> None:
+    def __init__(self, value: str | Text, max_width: int, max_height: int, background_color: Color | tuple[int, int, int] | str, text_color: Color | tuple[int, int, int] | str) -> None:
         text = value if isinstance(value, Text) else Text(value,
                                                           color=text_color)
-        text.maximize(999999, height)
-        super().__init__(text.get_width(), height, 0, 0, "ROW",
+        text = text.maximize(max_width, max_height)
+        super().__init__(text.get_width(), text.get_height(), 0, 0, "ROW",
                          "CENTER", "CENTER", 0, background_color, 0, True)
         self.add(text)
 
@@ -36,6 +37,7 @@ class TextInput(ProtectedFlexSlot):
                          corners_radius, background_color, True)
         self.set_text_color(text_color)
         self.__is_focused = False
+        self.__text = ""
         self.__set_text_container()
 
     def is_focused(self) -> bool:
@@ -68,6 +70,7 @@ class TextInput(ProtectedFlexSlot):
                              f"Expected a {KeyBoard.__name__} instance in kwwargs with key 'keyboard'")
         self.__add_focus_listener(mouse)
         self.__add_typing_listener(keyboard)
+        self.__add_delete_listener(keyboard)
 
     def __add_focus_listener(self, mouse: Mouse):
         if not mouse.is_clicked():
@@ -84,6 +87,37 @@ class TextInput(ProtectedFlexSlot):
             text = keyboard.last_input()
             if not text:
                 return
-            cell = _TextInputCell(text, self.__text_container.get_height(),
+            self.__text += text
+            cell = _TextInputCell(text, self.__text_container.get_width(),
+                                  self.__text_container.get_height(),
                                   self.get_color(), self.get_text_color())
             self.__text_container.add(cell)
+
+    def __add_delete_listener(self, keyboard: KeyBoard):
+
+        if not self.is_focused() or not keyboard.key_down("backspace"):
+            return
+
+        if not keyboard.ctrl_active() and not keyboard.meta_active():
+            self.__text_container.pop()
+            return
+
+        removed_cell = self.__text_container.pop()
+        removed_character = self.__retrieve_character_from_cell(removed_cell)
+
+        while removed_character != " ":
+            removed_cell = self.__text_container.pop()
+            removed_character = self.__retrieve_character_from_cell(
+                removed_cell)
+            if removed_character is None:
+                return
+
+    def __retrieve_character_from_cell(self, cell: Optional[Entity]) -> Optional[str]:
+        if not isinstance(cell, _TextInputCell):
+            return
+
+        removed_text_instance = cell.pop()
+        if not isinstance(removed_text_instance, Text):
+            return
+
+        return removed_text_instance.get_text()
