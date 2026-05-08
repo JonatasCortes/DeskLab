@@ -2,22 +2,21 @@ from typing import Any, Optional
 from src.labweb.entities import Entity
 from src.labweb.text import Text
 from src.labweb.color import Color
-from src.labweb.containers.flexslot.clickable_flexslot import ClickableFlexSlot
-from src.labweb.containers.flexslot.flexslot import FlexSlot
+from src.labweb.containers.flexbox.clickable_flexbox import ClickableFlexBox
 from src.labweb.containers.flexbox.flexbox import FlexBox
 from src.labweb.system_input.mouse import Mouse
 from src.labweb.system_input.keyboard import KeyBoard
 
 
-class _TextInputCell(FlexSlot):
+class _TextInputCell(FlexBox):
 
     def __init__(self, value: str | Text, max_width: int, max_height: int, background_color: Color | tuple[int, int, int] | str, text_color: Color | tuple[int, int, int] | str) -> None:
         text = value if isinstance(value, Text) else Text(value,
                                                           color=text_color)
         text = text.maximize(max_width, max_height)
-        super().__init__(text.get_width(), text.get_height(), 0,
+        super().__init__(text.get_width(), text.get_height(), 0, 0, "ROW",
                          "CENTER", "CENTER", 0, background_color, True)
-        self._set_child(text)
+        self.add(text)
 
 
 class _TextInputContainer(FlexBox):
@@ -66,14 +65,14 @@ class _TextInputContainer(FlexBox):
         if not isinstance(cell, _TextInputCell):
             return
 
-        removed_text_instance = cell.get_child()
+        removed_text_instance = cell.pop()
         if not isinstance(removed_text_instance, Text):
             return
 
         return removed_text_instance.get_text()
 
 
-class TextInput(ClickableFlexSlot):
+class TextInput(ClickableFlexBox):
 
     __HORIZONTAL_PADDING_PERCENTAGE = 5
     __VERTICAL_PADDING_PERCENTAGE = 33
@@ -86,7 +85,7 @@ class TextInput(ClickableFlexSlot):
                                                  int, int] | str = "WHITE",
                  text_color: Color | tuple[int, int, int] | str = "BLACK") -> None:
 
-        super().__init__(width, height, 0, "CENTER", "CENTER",
+        super().__init__(width, height, 0, 0, "ROW", "CENTER", "CENTER",
                          corners_radius, background_color, True)
         self.__set_text_container(text_color)
         self.__is_focused = False
