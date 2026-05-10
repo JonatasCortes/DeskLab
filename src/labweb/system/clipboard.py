@@ -218,7 +218,14 @@ class _MacOsClipBoardBackend(_ClipBoardBackend):
 
     @no_type_check
     def get_files(self) -> List[str]:
-        return self._search_paths_within_clipboard_text()
+        try:
+            pb = self.__paste_board.generalPasteboard()
+            paths = pb.propertyListForType_("NSFilenamesPboardType")
+            if paths:
+                return list(paths)
+            return []
+        except Exception:
+            return self._search_paths_within_clipboard_text()
 
     @no_type_check
     def get_image(self) -> Optional[Image]:
