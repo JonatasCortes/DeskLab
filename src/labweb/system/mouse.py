@@ -1,11 +1,11 @@
 from pynput import mouse
-from src.labweb.entities import Entity
+from src.labweb.system.system_listener import SystemListener
 from typing import Optional
 from pygame.event import Event
 from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, DROPFILE
 
 
-class Mouse(Entity):
+class Mouse(SystemListener):
 
     def __init__(self) -> None:
         self.__position = (0, 0)

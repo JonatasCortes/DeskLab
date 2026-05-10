@@ -1,6 +1,6 @@
 from src.labweb.color import Color
 from src.labweb.constants import VerticalAlignment, HorizontalAlignment, FlexDirection
-from src.labweb.containers.flexbox.protected_flexbox import ProtectedFlexBox
+from src.labweb.containers.protected_flexbox import ProtectedFlexBox
 from src.labweb.area import HoverEmphasizingArea
 
 

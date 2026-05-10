@@ -1,6 +1,6 @@
 from typing import Any
 
-from src.labweb.system_input.mouse import Mouse
+from src.labweb.system.mouse import Mouse
 from src.labweb.color import Color
 from src.labweb.entities import ContainableEntity, DisplayableEntity, ColorableEntity, CopiableEntity, EventSensitiveEntity
 from src.labweb.utils import is_inside_circle

@@ -1,5 +1,5 @@
 from typing import Optional, Set
-from src.labweb.entities import Entity
+from src.labweb.system.system_listener import SystemListener
 from pygame.event import Event
 import pygame
 from pygame.constants import (
@@ -50,7 +50,7 @@ class _PygameKeyMapper:
         raise ValueError(error)
 
 
-class KeyBoard(Entity):
+class KeyBoard(SystemListener):
     def __init__(self) -> None:
         self.__event: Optional[Event] = None
         self.__buffer: list[str] = []

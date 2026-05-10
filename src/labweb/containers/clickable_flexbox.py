@@ -1,5 +1,5 @@
 from src.labweb.area import ClickableArea
-from src.labweb.containers.flexbox.protected_flexbox import ProtectedFlexBox
+from src.labweb.containers.protected_flexbox import ProtectedFlexBox
 
 
 class ClickableFlexBox(ProtectedFlexBox, ClickableArea):
