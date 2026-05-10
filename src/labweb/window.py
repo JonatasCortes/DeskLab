@@ -6,6 +6,7 @@ from src.labweb.containers.flexbox import FlexBox
 from src.labweb.constants import FlexDirection, HorizontalAlignment, VerticalAlignment
 from src.labweb.system.mouse import Mouse
 from src.labweb.system.keyboard import KeyBoard
+from src.labweb.system.clipboard import ClipBoard
 from pygame._sdl2 import Window as PygameWindow
 import pygame
 import sys
@@ -51,6 +52,7 @@ class Window(FlexBox):
 
         mouse = Mouse()
         keyboard = KeyBoard()
+        clipboard = ClipBoard()
 
         self.__running = True
         while self.__running:
@@ -69,6 +71,7 @@ class Window(FlexBox):
 
                     self.handle_event(event=event, mouse=mouse,
                                       keyboard=keyboard,
+                                      clipboard=clipboard,
                                       screen=self.__screen)
             else:
                 keyboard.update_event(None)
