@@ -126,10 +126,10 @@ class DrawingArea(RectangularArea, EventSensitiveEntity):
         if not self.contains(mouse_pos):
             return
         if self.is_erasing():
-            pygame.draw.circle(screen, self.get_color().luminance_emphasized().get(),
+            pygame.draw.circle(screen, self.get_color().luminance_emphasized().get_tuple(),
                                mouse_pos, self.get_eraser_width())
         elif self.is_drawing():
-            pygame.draw.circle(screen, self.get_brush_color().get(), mouse_pos,
+            pygame.draw.circle(screen, self.get_brush_color().get_tuple(), mouse_pos,
                                self.get_brush_width()//2)
 
     def __update_drawing_state_based_on_mouse_behavior(self, mouse: Mouse):
@@ -222,10 +222,10 @@ class DrawingArea(RectangularArea, EventSensitiveEntity):
         for brush_color, chunk in drawing_chunks:
             previous = chunk[0]
             for position in chunk[1:]:
-                pygame.draw.line(screen, brush_color.get(),
+                pygame.draw.line(screen, brush_color.get_tuple(),
                                  previous, position,
                                  width=self.get_brush_width())
-                pygame.draw.circle(screen, brush_color.get(),
+                pygame.draw.circle(screen, brush_color.get_tuple(),
                                    previous, (self.get_brush_width()//2)-1)
                 previous = position
 

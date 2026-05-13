@@ -97,7 +97,7 @@ class ColorableEntity(Entity):
         return self.__color.copy()
 
     def get_color_tuple(self) -> tuple[int, ...]:
-        return self.__color.get()
+        return self.__color.get_tuple()
 
     def color_is(self, color: Color | tuple[int, ...] | str) -> bool:
         color = color if isinstance(color, Color) else Color(color)
