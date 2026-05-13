@@ -7,11 +7,11 @@ from src.labweb.color import Color
 from src.labweb.system.mouse import Mouse
 from src.labweb.system.keyboard import KeyBoard
 from src.labweb.system.clipboard import ClipBoard
-from src.labweb.containers.clickable_flexbox import ClickableFlexBox
+from src.labweb.area import ClickableArea
 from src.labweb.text import Text
 
 
-class TextInput(ClickableFlexBox):
+class TextInput(ClickableArea):
     def __init__(self,
                  width: int,
                  height: int,
@@ -20,8 +20,7 @@ class TextInput(ClickableFlexBox):
                                          Tuple[int, int, int], str] = "WHITE",
                  text_color: Union[Color, Tuple[int, int, int], str] = "BLACK") -> None:
 
-        super().__init__(width, height, 0, 0, "ROW", "LEFT",
-                         "CENTER", corners_radius, background_color, True)
+        super().__init__(width, height, background_color, corners_radius)
 
         text = Text("", color=text_color, font="arial")
         self.__text: Text = text.maximize(99999, int(height*0.5))
@@ -38,13 +37,24 @@ class TextInput(ClickableFlexBox):
 
         # Visual e Scroll
         self.__scroll_offset: int = 0
-        self.__display_cursor: bool = True
         self.__last_cursor_toggle: float = time.time()
         self.__cursor_blink_speed: float = 0.5
 
         # Timers para cliques múltiplos
         self.__last_click_time: float = 0.0
         self.__click_count: int = 0
+
+    def _set_width(self, width: int):
+        if width < 30:
+            error = f"ERROR: minimum width for {self.__class__.__name__} is {30}"
+            raise ValueError(error)
+        return super()._set_width(width)
+
+    def _set_height(self, height: int):
+        if height < 20:
+            error = f"ERROR: minimum height for {self.__class__.__name__} is {20}"
+            raise ValueError(error)
+        return super()._set_height(height)
 
     def __get_x_at_index(self, index: int) -> int:
         substring: str = self.__text.get_text()[:index]
@@ -229,14 +239,25 @@ class TextInput(ClickableFlexBox):
 
     def __update_scroll(self) -> None:
         cursor_x: int = self.__get_x_at_index(self.__cursor_index)
+        total_text_width: int = self.__get_x_at_index(
+            len(self.__text.get_text()))
         padding: int = 20
-        if cursor_x - self.__scroll_offset > self.get_width() - padding:
-            self.__scroll_offset = cursor_x - self.get_width() + padding
+        view_width: int = self.get_width()
+
+        if cursor_x - self.__scroll_offset > view_width - padding:
+            self.__scroll_offset = cursor_x - view_width + padding
+
         elif cursor_x - self.__scroll_offset < padding:
             self.__scroll_offset = max(0, cursor_x - padding)
 
+        if total_text_width - self.__scroll_offset < view_width:
+            self.__scroll_offset = max(
+                0, total_text_width - view_width + padding)
+
     def display(self, screen: Surface) -> None:
         super().display(screen)
+
+        margin_x = 10
 
         # Clip para evitar que o texto vaze o container
         text_area: Rect = Rect(self.get_x(), self.get_y(),
@@ -250,21 +271,21 @@ class TextInput(ClickableFlexBox):
                 min(self.__selection_anchor, self.__cursor_index))
             end_x: int = self.__get_x_at_index(
                 max(self.__selection_anchor, self.__cursor_index))
-            sel_rect: Rect = Rect(self.get_x() + start_x - self.__scroll_offset,
+            sel_rect: Rect = Rect(self.get_x() + margin_x + start_x - self.__scroll_offset,
                                   self.get_y(), end_x - start_x, self.get_height())
             pygame.draw.rect(screen, (173, 216, 230), sel_rect)
 
         # Desenhar Texto Principal
         text_surf: Surface = self.__text.get_font().render(
             self.__text.get_text(), True, self.__text_color.get_tuple())
-        screen.blit(text_surf, (self.get_x() - self.__scroll_offset,
+        screen.blit(text_surf, (self.get_x() + margin_x - self.__scroll_offset,
                     self.get_y() + (self.get_height() - text_surf.get_height()) // 2))
 
         # Desenhar Cursor
         if self.__is_focused:
             now: float = time.time()
             if int((now - self.__last_cursor_toggle) / self.__cursor_blink_speed) % 2 == 0:
-                cx: int = self.get_x() + self.__get_x_at_index(self.__cursor_index) - \
+                cx: int = self.get_x() + margin_x + self.__get_x_at_index(self.__cursor_index) - \
                     self.__scroll_offset
                 pygame.draw.line(screen, (0, 0, 0), (cx, self.get_y(
                 ) + 5), (cx, self.get_y() + self.get_height() - 5), 2)
