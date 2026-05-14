@@ -114,8 +114,7 @@ class DrawingArea(RectangularArea, EventSensitiveEntity):
         mouse = kwargs.get("mouse")
 
         if not isinstance(mouse, Mouse):
-            error = "Expected a Mouse instance in kwargs with key 'mouse'"
-            raise ValueError(error)
+            self._raise_for_missing_parameter("mouse", Mouse.__name__)
 
         self.__current_mouse_pos = mouse.get_position()
         self.__add_drawing_listener(mouse)

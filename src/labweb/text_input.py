@@ -99,10 +99,14 @@ class TextInput(ClickableArea):
         keyboard = kwargs.get("keyboard")
         clipboard = kwargs.get("clipboard")
 
-        if not isinstance(mouse, Mouse) or not isinstance(keyboard, KeyBoard) or not isinstance(clipboard, ClipBoard):
-            raise RuntimeError(f"Expected a {Mouse.__name__} instance in kwargs with key 'mouse'",
-                               f"Expected a {KeyBoard.__name__} instance in kwargs with key 'keyboard'",
-                               f"Expected a {ClipBoard.__name__} instance in kwargs with key 'clipboard'")
+        if not isinstance(mouse, Mouse):
+            self._raise_for_missing_parameter("mouse", Mouse.__name__)
+
+        if not isinstance(keyboard, KeyBoard):
+            self._raise_for_missing_parameter("keyboard", KeyBoard.__name__)
+
+        if not isinstance(clipboard, ClipBoard):
+            self._raise_for_missing_parameter("clipboard", ClipBoard.__name__)
 
         self.__handle_focus(mouse)
         if not self.__is_focused:

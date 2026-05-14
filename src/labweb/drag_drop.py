@@ -31,8 +31,7 @@ class DragDrop(HoverEmphasizingFlexBox):
         mouse = kwargs.get("mouse")
         event = kwargs.get("event")
         if not isinstance(mouse, Mouse):
-            error = "Expected a Mouse instance in kwargs with key 'mouse'"
-            raise ValueError(error)
+            self._raise_for_missing_parameter("mouse", Mouse.__name__)
         if event:
             self.__add_file_drop_listener(event, mouse)
 
