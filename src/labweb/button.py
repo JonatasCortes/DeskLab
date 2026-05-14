@@ -1,11 +1,11 @@
 from typing import Any, Callable
 from src.labweb.constants import FlexDirection, HorizontalAlignment, VerticalAlignment
-from src.labweb.containers.clickable_flexbox import ClickableFlexBox
+from src.labweb.containers.clickable_hover_emphasizing_flexbox import ClickableHoverEmphasizingFlexBox
+from src.labweb.containers.flexbox import FlexBox
 from src.labweb.color import Color
-from pygame.event import Event
 
 
-class Button(ClickableFlexBox):
+class Button(ClickableHoverEmphasizingFlexBox, FlexBox):
 
     def __init__(self,
                  width: int,
@@ -43,8 +43,8 @@ class Button(ClickableFlexBox):
     def get_actions(self) -> list[Callable[..., Any]]:
         return self.__actions
 
-    def handle_event(self, event: Event, *args: Any, **kwargs: Any) -> None:
-        super().handle_event(event, *args, **kwargs)
+    def handle_event(self, *args: Any, **kwargs: Any) -> None:
+        super().handle_event(*args, **kwargs)
         self.__add_click_listener()
 
     def copy(self) -> "Button":
@@ -52,6 +52,6 @@ class Button(ClickableFlexBox):
                                       self.get_padding(), self.get_space_between(),
                                       self.get_flex_direction(), self.get_horizontal_alignment(),
                                       self.get_vertical_alignment(), self.get_corners_radius(),
-                                      self.get_color(), self.is_bounded())
+                                      self.get_color(), self.get_emphasis_intensity(), self.is_bounded())
         self._migrate_children(new_instance)
         return new_instance

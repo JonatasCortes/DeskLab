@@ -1,8 +1,8 @@
 from typing import Any
-from labweb.system_input.mouse import Mouse
+from src.labweb.system.mouse import Mouse
 from src.labweb.color import Color
 from src.labweb.area import RectangularArea
-from pygame.event import Event
+from src.labweb.entities import EventSensitiveEntity
 from pygame import Surface
 import pygame
 from src.labweb.utils import point_to_segment_distance
@@ -17,7 +17,7 @@ class _DrawingState(Enum):
     FILLING = 5
 
 
-class DrawingArea(RectangularArea):
+class DrawingArea(RectangularArea, EventSensitiveEntity):
 
     def __init__(self,
                  width: int,
@@ -109,7 +109,8 @@ class DrawingArea(RectangularArea):
     def get_drawing_state(self) -> _DrawingState:
         return self.__drawing_state
 
-    def handle_event(self, event: Event, *args: Any, **kwargs: Any) -> None:
+    def handle_event(self, *args: Any, **kwargs: Any) -> None:
+        super().handle_event(*args, **kwargs)
         mouse = kwargs.get("mouse")
 
         if not isinstance(mouse, Mouse):
@@ -125,10 +126,10 @@ class DrawingArea(RectangularArea):
         if not self.contains(mouse_pos):
             return
         if self.is_erasing():
-            pygame.draw.circle(screen, self.get_color().luminance_emphasized().get(),
+            pygame.draw.circle(screen, self.get_color().luminance_emphasized().get_tuple(),
                                mouse_pos, self.get_eraser_width())
         elif self.is_drawing():
-            pygame.draw.circle(screen, self.get_brush_color().get(), mouse_pos,
+            pygame.draw.circle(screen, self.get_brush_color().get_tuple(), mouse_pos,
                                self.get_brush_width()//2)
 
     def __update_drawing_state_based_on_mouse_behavior(self, mouse: Mouse):
@@ -221,10 +222,10 @@ class DrawingArea(RectangularArea):
         for brush_color, chunk in drawing_chunks:
             previous = chunk[0]
             for position in chunk[1:]:
-                pygame.draw.line(screen, brush_color.get(),
+                pygame.draw.line(screen, brush_color.get_tuple(),
                                  previous, position,
                                  width=self.get_brush_width())
-                pygame.draw.circle(screen, brush_color.get(),
+                pygame.draw.circle(screen, brush_color.get_tuple(),
                                    previous, (self.get_brush_width()//2)-1)
                 previous = position
 

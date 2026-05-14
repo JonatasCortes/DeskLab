@@ -1,5 +1,8 @@
+from typing import Any
+
+from src.labweb.system.mouse import Mouse
 from src.labweb.color import Color
-from src.labweb.entities import ContainableEntity, DisplayableEntity, ColorableEntity, CopiableEntity
+from src.labweb.entities import ContainableEntity, DisplayableEntity, ColorableEntity, CopiableEntity, EventSensitiveEntity
 from src.labweb.utils import is_inside_circle
 from pygame import Surface
 import pygame
@@ -103,3 +106,90 @@ class RectangularArea(Area):
     def copy(self) -> "RectangularArea":
         return self.__class__(self.get_width(), self.get_height(),
                               self.get_color(), self.get_corners_radius())
+
+
+class ClickableArea(RectangularArea, EventSensitiveEntity):
+
+    def __init__(self, width: int, height: int, color: Color | tuple[int, int, int] | str = "BLACK", corners_radius: tuple[int, int, int, int] | int = 0) -> None:
+        super().__init__(width, height, color, corners_radius)
+        self.__is_clicked = False
+        self.__is_held = False
+
+    def is_clicked(self) -> bool:
+        return self.__is_clicked
+
+    def is_held(self) -> bool:
+        return self.__is_held
+
+    def handle_event(self, *args: Any, **kwargs: Any) -> None:
+        super().handle_event(*args, **kwargs)
+        mouse = kwargs.get("mouse")
+        if not isinstance(mouse, Mouse):
+            raise ValueError(
+                "Expected a Mouse instance in kwargs with key 'mouse'")
+
+        inside = self.contains(mouse.get_position())
+
+        self.__is_clicked = mouse.is_clicked() and inside
+        self.__is_held = mouse.is_held() and inside
+
+    def copy(self) -> "ClickableArea":
+        return self.__class__(
+            self.get_width(),
+            self.get_height(),
+            self.get_color(),
+            self.get_corners_radius()
+        )
+
+
+class HoverEmphasizingArea(RectangularArea, EventSensitiveEntity):
+
+    def __init__(self,
+                 width: int,
+                 height: int,
+                 color: Color | tuple[int, int, int] | str = "BLACK",
+                 corners_radius: tuple[int, int, int, int] | int = 0,
+                 hover_emphasis_intensity: int = 100) -> None:
+        self.set_color(color)
+        self.__hover_emphasis_intensity = self._ensure_not_negative(
+            hover_emphasis_intensity)
+        super().__init__(width, height, color, corners_radius)
+
+    def __add_hover_listener(self, mouse_pos: tuple[int, int]) -> None:
+
+        hovered = self.contains(mouse_pos)
+        color = self.get_color()
+
+        if hovered:
+            color = color.luminance_emphasized(
+                self.__hover_emphasis_intensity)
+
+        super().set_color(color)
+
+    def handle_event(self, *args: Any, **kwargs: Any) -> None:
+        super().handle_event(*args, **kwargs)
+        mouse = kwargs.get("mouse")
+        if not isinstance(mouse, Mouse):
+            error = "Expected a Mouse instance in kwargs with key 'mouse'"
+            raise ValueError(error)
+        self.__add_hover_listener(mouse.get_position())
+
+    def set_color(self, color: Color | tuple[int, ...] | str):
+        if not isinstance(color, Color):
+            color = Color(color)
+        self.__default_background_color = color
+        return super().set_color(color)
+
+    def get_color(self) -> Color:
+        return self.__default_background_color.copy()
+
+    def get_emphasis_intensity(self) -> int:
+        return self.__hover_emphasis_intensity
+
+    def copy(self) -> "HoverEmphasizingArea":
+        new_instance = self.__class__(self.get_width(),
+                                      self.get_height(),
+                                      self.get_color(),
+                                      self.get_corners_radius(),
+                                      self.get_emphasis_intensity())
+        return new_instance

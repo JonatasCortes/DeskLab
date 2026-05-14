@@ -1,10 +1,10 @@
-from src.labweb.containers.flex_container import FlexContainer
+from src.labweb.containers.protected_flexbox import ProtectedFlexBox
 from src.labweb.entities import Entity
 from typing import Optional, Union
 from src.labweb.constants import VerticalAlignment, HorizontalAlignment, FlexDirection
 
 
-class FlexBox(FlexContainer):
+class FlexBox(ProtectedFlexBox):
 
     def get_children(self) -> list[Entity]: return self._get_children()
     def get_padding(self) -> int: return self._get_padding()
@@ -16,6 +16,7 @@ class FlexBox(FlexContainer):
     def clear(self) -> None: return self._clear()
     def length(self) -> int: return self._length()
     def is_empty(self) -> bool: return self._is_empty()
+    def index(self, entity: Entity) -> int: return self._index(entity)
 
     def get_horizontal_alignment(self) -> HorizontalAlignment:
         return self._get_horizontal_alignment()

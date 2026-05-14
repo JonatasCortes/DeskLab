@@ -4,8 +4,9 @@ from pygame.locals import QUIT
 from src.labweb.color import Color
 from src.labweb.containers.flexbox import FlexBox
 from src.labweb.constants import FlexDirection, HorizontalAlignment, VerticalAlignment
-from src.labweb.system_input.mouse import Mouse
-from src.labweb.system_input.keyboard import KeyBoard
+from src.labweb.system.mouse import Mouse
+from src.labweb.system.keyboard import KeyBoard
+from src.labweb.system.clipboard import ClipBoard
 from pygame._sdl2 import Window as PygameWindow
 import pygame
 import sys
@@ -32,7 +33,7 @@ class Window(FlexBox):
                          corners_radius=0, color=color, bounded=True)
 
     @classmethod
-    def setup(cls, width: int = 640, height: int = 480, caption: str = "PyPaint") -> None:
+    def setup(cls, width: int = 640, height: int = 480, caption: str = "LabWeb") -> None:
         pygame.init()
         cls.__screen = pygame.display.set_mode((width, height))
         cls.__clock = pygame.time.Clock()
@@ -51,20 +52,33 @@ class Window(FlexBox):
 
         mouse = Mouse()
         keyboard = KeyBoard()
+        clipboard = ClipBoard()
 
         self.__running = True
         while self.__running:
 
-            for event in pygame.event.get():
+            mouse.update_refference_origin(
+                *self.get_window_coordinates())
 
-                keyboard.update_event(event)
-                mouse.update_event(event)
-                mouse.update_refference_origin(*self.get_window_coordinates())
+            if events := pygame.event.get():
+                for event in events:
 
-                if event.type == QUIT:
-                    sys.exit()
-                self.handle_event(event, mouse=mouse,
+                    keyboard.update_event(event)
+                    mouse.update_event(event)
+
+                    if event.type == QUIT:
+                        sys.exit()
+
+                    self.handle_event(event=event, mouse=mouse,
+                                      keyboard=keyboard,
+                                      clipboard=clipboard,
+                                      screen=self.__screen)
+            else:
+                keyboard.update_event(None)
+                mouse.update_event(None)
+                self.handle_event(mouse=mouse,
                                   keyboard=keyboard,
+                                  clipboard=clipboard,
                                   screen=self.__screen)
 
             self.__screen.fill((0, 0, 0))

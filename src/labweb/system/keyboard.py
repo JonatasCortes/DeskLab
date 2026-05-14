@@ -1,5 +1,5 @@
 from typing import Optional, Set
-from src.labweb.entities import Entity
+from src.labweb.system.system_listener import SystemListener
 from pygame.event import Event
 import pygame
 from pygame.constants import (
@@ -38,17 +38,19 @@ class _PygameKeyMapper:
 
     def get_key(self, key_name: str) -> list[int]:
 
-        if key_value := self.__SPECIAL_KEYS.get(key_name):
+        lower_key_name = key_name.lower()
+
+        if key_value := self.__SPECIAL_KEYS.get(lower_key_name):
             return key_value
 
-        if key_value := self.__key_map.get(key_name):
+        if key_value := self.__key_map.get(lower_key_name):
             return [key_value]
 
         error = f"{key_name} is not recognised as a valid key name"
         raise ValueError(error)
 
 
-class KeyBoard(Entity):
+class KeyBoard(SystemListener):
     def __init__(self) -> None:
         self.__event: Optional[Event] = None
         self.__buffer: list[str] = []
@@ -56,8 +58,10 @@ class KeyBoard(Entity):
         self.__mod: int = 0
         self.__key_mapper = _PygameKeyMapper()
 
-    def update_event(self, event: Event):
+    def update_event(self, event: Optional[Event]):
         self.__event = event
+        if not event:
+            return
 
         if event.type == KEYDOWN:
             self.__mod = event.mod
@@ -76,12 +80,14 @@ class KeyBoard(Entity):
     def peek(self) -> list[str]:
         return self.__buffer.copy()
 
-    def last_input(self) -> str:
+    def last_input(self) -> Optional[str]:
+        if not self.__buffer:
+            return None
         return self.__buffer[-1]
 
     def key_pressed(self, key: str) -> bool:
         key_values = self.__key_mapper.get_key(key)
-        return any(key in self.__pressed_keys for key in key_values)
+        return any(k in self.__pressed_keys for k in key_values)
 
     def __key_events(self, key: str, event_type: int) -> bool:
         key = key.lower()
@@ -92,11 +98,28 @@ class KeyBoard(Entity):
             any(k == self.__event.key for k in key_values)
         )
 
-    def key_down_event(self, key: str) -> bool:
+    def key_down(self, key: str) -> bool:
         return self.__key_events(key, KEYDOWN)
 
-    def key_up_event(self, key: str) -> bool:
+    def key_up(self, key: str) -> bool:
         return self.__key_events(key, KEYUP)
+
+    def __is_event_type(self, type: int) -> bool:
+        if self.__event and self.__event.type == type:
+            return True
+        return False
+
+    def any_key_pressed(self) -> bool:
+        return len(self.__pressed_keys) != 0
+
+    def any_key_down(self) -> bool:
+        return self.__is_event_type(KEYDOWN)
+
+    def any_key_up(self) -> bool:
+        return self.__is_event_type(KEYUP)
+
+    def any_text_input(self) -> bool:
+        return self.__is_event_type(TEXTINPUT)
 
     def ctrl_active(self) -> bool:
         return bool(self.__mod & KMOD_CTRL)

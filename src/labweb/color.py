@@ -9,13 +9,13 @@ class Color:
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, self.__class__):
-            return self.get() == other.get()
+            return self.get_tuple() == other.get_tuple()
         elif isinstance(other, str):
             return self == self.__class__(other)
         return NotImplemented
 
     def copy(self) -> "Color":
-        return self.__class__(self.get())
+        return self.__class__(self.get_tuple())
 
     def __assert_in_range(self, value: int) -> None:
         if not (0 <= value <= 255):
@@ -86,7 +86,7 @@ class Color:
         new_tuple = self.__decrease_tuple_channels(self.__tuple, intensity)
         return Color(new_tuple)
 
-    def get(self) -> tuple[int, int, int]:
+    def get_tuple(self) -> tuple[int, int, int]:
         return self.__tuple
 
     @classmethod

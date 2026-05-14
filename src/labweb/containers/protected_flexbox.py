@@ -3,7 +3,7 @@ from src.labweb.constants import VerticalAlignment, HorizontalAlignment, FlexDir
 from src.labweb.containers.flex_container_interface import FlexContainerInterface
 
 
-class FlexContainer(FlexContainerInterface):
+class ProtectedFlexBox(FlexContainerInterface):
 
     def __get_main_dimension(self, entity: ContainableEntity) -> int:
         if self._get_flex_direction() == FlexDirection.COLUMN:
@@ -45,7 +45,7 @@ class FlexContainer(FlexContainerInterface):
                     if isinstance(c, ContainableEntity)), default=0)
 
     def __calculate_total_space_between(self) -> int:
-        return self._get_space_between() * (self._length() - 1)
+        return self._get_space_between() * (self._count_containable_children() - 1)
 
     def __validate_bounds(self, main_sum: int, secondary_max: int, total_space_between: int) -> None:
         padding = self._get_padding()
@@ -131,7 +131,7 @@ class FlexContainer(FlexContainerInterface):
 
         return safe_area_start
 
-    def copy(self) -> "FlexContainer":
+    def copy(self) -> "ProtectedFlexBox":
         instance = self._copy()
         assert isinstance(instance, self.__class__)
         return instance

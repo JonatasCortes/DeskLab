@@ -1,16 +1,17 @@
 from pynput import mouse
-from src.labweb.entities import Entity
+from src.labweb.system.system_listener import SystemListener
 from typing import Optional
 from pygame.event import Event
 from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, DROPFILE
 
 
-class Mouse(Entity):
+class Mouse(SystemListener):
 
     def __init__(self) -> None:
         self.__position = (0, 0)
         self.__refference_x = 0
         self.__refference_y = 0
+        self.__is_held = False
         self.__event: Optional[Event] = None
         self.__activate_listeners()
 
@@ -19,8 +20,12 @@ class Mouse(Entity):
             return True
         return False
 
-    def update_event(self, event: Event):
+    def update_event(self, event: Optional[Event]):
         self.__event = event
+        if self.is_clicked():
+            self.__is_held = True
+        elif self.is_released():
+            self.__is_held = False
 
     def update_refference_origin(self, x: int, y: int):
         self.__refference_x = x
@@ -28,6 +33,9 @@ class Mouse(Entity):
 
     def get_position(self) -> tuple[int, int]:
         return self.__position
+
+    def is_held(self) -> bool:
+        return self.__is_held
 
     def is_clicked(self) -> bool:
         return self.__matches_current_event(MOUSEBUTTONDOWN)
