@@ -124,7 +124,7 @@ class TextInput(ClickableArea):
             self.__is_focused = False
 
     def __handle_mouse_drag_selection(self, mouse: Mouse) -> None:
-        if mouse.is_held() and not self.is_clicked():
+        if mouse.is_held() and not self.is_clicked() and self.__click_count == 1:
             self.__cursor_index = self.__get_closest_index_from_mouse_pos(
                 mouse.get_position()[0])
             if self.__selection_anchor is None:
