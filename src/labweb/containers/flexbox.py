@@ -41,8 +41,3 @@ class FlexBox(ProtectedFlexBox):
 
     def insert(self, index: int, entity: Entity) -> None:
         self._insert(index, entity)
-
-    def copy(self) -> "FlexBox":
-        instance = self._copy()
-        assert isinstance(instance, self.__class__)
-        return instance
