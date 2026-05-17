@@ -1,58 +1,76 @@
 from typing import Callable, Any
 from src.labweb.system.mouse import Mouse
-from src.labweb.color import Color
+from src.labweb.properties.color import Color
 from src.labweb.entities import EventSensitiveEntity
 from src.labweb.area import Area
 from typing import Any, Callable
 
 
-class EventListener(EventSensitiveEntity):
+class _ProtectedEventListener(EventSensitiveEntity):
 
     def __init__(self, condition: Callable[..., bool], actions: Callable[..., Any] | list[Callable[..., Any]]) -> None:
-        self.set_actions(actions)
-        self.set_condition(condition)
+        self._set_actions(actions)
+        self._set_condition(condition)
 
     def handle_event(self, *args: Any, **kwargs: Any) -> None:
         if self._trigger_condition(*args, **kwargs):
             self._trigger_actions(*args, **kwargs)
 
-    def get_condition(self) -> Callable[..., bool]:
+    def _get_condition(self) -> Callable[..., bool]:
         return self.__condition
 
-    def set_condition(self, condition: Callable[..., bool]) -> None:
+    def _set_condition(self, condition: Callable[..., bool]) -> None:
         self.__condition = condition
 
-    def get_actions(self) -> list[Callable[..., Any]]:
+    def _get_actions(self) -> list[Callable[..., Any]]:
         return self.__actions
 
-    def set_actions(self, action: Callable[..., Any] | list[Callable[..., Any]]) -> None:
-        if isinstance(action, list):
-            self.__actions = action
+    def _set_actions(self, actions: Callable[..., Any] | list[Callable[..., Any]]) -> None:
+        if isinstance(actions, list):
+            self.__actions = actions
             return
-        self.__actions: list[Callable[..., Any]] = [action]
+        self.__actions: list[Callable[..., Any]] = [actions]
 
-    def add_actions(self, action: Callable[..., Any] | list[Callable[..., Any]]) -> None:
-        if isinstance(action, Callable):
-            self.__actions.append(action)
+    def _add_actions(self, actions: Callable[..., Any] | list[Callable[..., Any]]) -> None:
+        if isinstance(actions, Callable):
+            self.__actions.append(actions)
             return
-        self.__actions.extend(action)
+        self.__actions.extend(actions)
 
     def _trigger_condition(self, *args: Any, **kwargs: Any) -> bool:
-        condition = self.get_condition()
+        condition = self._get_condition()
         try:
             return condition(*args, **kwargs)
         except TypeError:
             return condition()
 
     def _trigger_actions(self, *args: Any, **kwargs: Any) -> None:
-        for action in self.get_actions():
+        for action in self._get_actions():
             try:
                 action(*args, **kwargs)
             except TypeError:
                 return action()
 
 
-class FirstTimeEventListener(EventListener):
+class EventListener(_ProtectedEventListener):
+
+    def get_condition(self) -> Callable[..., bool]:
+        return self._get_condition()
+
+    def set_condition(self, condition: Callable[..., bool]) -> None:
+        return self._set_condition(condition)
+
+    def get_actions(self) -> list[Callable[..., Any]]:
+        return self._get_actions()
+
+    def set_actions(self, actions: Callable[..., Any] | list[Callable[..., Any]]) -> None:
+        return self._set_actions(actions)
+
+    def add_actions(self, actions: Callable[..., Any] | list[Callable[..., Any]]) -> None:
+        self._add_actions(actions)
+
+
+class _ProtectedFirstTimeEventListener(_ProtectedEventListener):
 
     def __init__(self, condition: Callable[..., bool], actions: Callable[..., Any] | list[Callable[..., Any]]) -> None:
         self.__has_triggered = False
@@ -64,7 +82,11 @@ class FirstTimeEventListener(EventListener):
             self.__has_triggered = True
 
 
-class ChangeEventListener(EventListener):
+class FirstTimeEventListener(_ProtectedFirstTimeEventListener, EventListener):
+    pass
+
+
+class _ProtectedChangeEventListener(_ProtectedEventListener):
 
     def __init__(self, condition: Callable[..., bool], actions: Callable[..., Any] | list[Callable[..., Any]]) -> None:
         self.__previous_state = None
@@ -78,7 +100,11 @@ class ChangeEventListener(EventListener):
         self.__previous_state = condition_value
 
 
-class HoverColorEventListener(ChangeEventListener):
+class ChangeEventListener(_ProtectedChangeEventListener, EventListener):
+    pass
+
+
+class HoverColorEventListener(_ProtectedChangeEventListener):
 
     def __init__(self, area: Area, hover_color: Color | tuple[int, int, int] | str) -> None:
         self.__area = area
@@ -99,7 +125,7 @@ class HoverColorEventListener(ChangeEventListener):
         self.__area.set_color(self.__default_color)
 
 
-class _MouseEventListener(EventListener):
+class _MouseEventListener(_ProtectedEventListener):
 
     def __init__(self, area: Area, actions: Callable[..., Any] | list[Callable[..., Any]], condition_func: str) -> None:
         self.__area = area
@@ -113,6 +139,15 @@ class _MouseEventListener(EventListener):
 
         mouse_condition = getattr(mouse, condition_func)()
         return mouse_condition and self.__area.contains(mouse.get_position())
+
+    def get_actions(self) -> list[Callable[..., Any]]:
+        return self._get_actions()
+
+    def set_actions(self, actions: Callable[..., Any] | list[Callable[..., Any]]) -> None:
+        return self._set_actions(actions)
+
+    def add_actions(self, actions: Callable[..., Any] | list[Callable[..., Any]]) -> None:
+        return self._add_actions(actions)
 
 
 class MouseClickEventListener(_MouseEventListener):
