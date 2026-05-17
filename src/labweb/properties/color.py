@@ -1,8 +1,9 @@
 import logging
 from typing import Literal
+from src.labweb.entities import Entity
 
 
-class Color:
+class Color(Entity):
 
     def __init__(self, color: tuple[int, ...] | str) -> None:
         self.__set_color(color)
