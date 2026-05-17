@@ -11,7 +11,7 @@ from PIL import Image as PilImage
 from typing import Optional, List, Final, no_type_check
 from src.labweb.system.system_listener import SystemListener
 from src.labweb.primitives.text import Text
-from src.labweb.image import Image
+from src.labweb.primitives.image import Image
 from typing import no_type_check
 from abc import ABC, abstractmethod
 
