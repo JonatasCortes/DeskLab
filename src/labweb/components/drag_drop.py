@@ -1,12 +1,12 @@
-from src.labweb.containers.hover_emphasizing_flexbox import HoverEmphasizingFlexBox
+from src.labweb.containers.flexbox import FlexBox
 from src.labweb.system.mouse import Mouse
 from pygame.event import Event
 from typing import Any
 from src.labweb.constants import FlexDirection, HorizontalAlignment, VerticalAlignment
-from src.labweb.color import Color
+from src.labweb.primitives.color import Color
 
 
-class DragDrop(HoverEmphasizingFlexBox):
+class DragDrop(FlexBox):
 
     def __init__(self,
                  width: int,
@@ -18,21 +18,19 @@ class DragDrop(HoverEmphasizingFlexBox):
                  vertical_alignment: str | VerticalAlignment = VerticalAlignment.CENTER,
                  corners_radius: tuple[int, int, int, int] | int = 0,
                  color: Color | tuple[int, int, int] | str = "BLACK",
-                 hover_emphasis_intensity: int = 20,
                  bounded: bool = True) -> None:
 
         self.__files: list[str] = []
         super().__init__(width, height, padding, space_between, flex_direction,
                          horizontal_alignment, vertical_alignment, corners_radius,
-                         color, hover_emphasis_intensity, bounded)
+                         color, bounded)
 
     def handle_event(self, *args: Any, **kwargs: Any) -> None:
         super().handle_event(*args, **kwargs)
         mouse = kwargs.get("mouse")
         event = kwargs.get("event")
         if not isinstance(mouse, Mouse):
-            error = "Expected a Mouse instance in kwargs with key 'mouse'"
-            raise ValueError(error)
+            self._raise_for_missing_parameter("mouse", Mouse.__name__)
         if event:
             self.__add_file_drop_listener(event, mouse)
 
@@ -57,8 +55,3 @@ class DragDrop(HoverEmphasizingFlexBox):
 
     def count_files(self) -> int:
         return len(self.__files)
-
-    def copy(self) -> "DragDrop":
-        instance = self._copy()
-        assert isinstance(instance, self.__class__)
-        return instance

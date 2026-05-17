@@ -1,11 +1,11 @@
-from typing import Any, Callable
+from typing import Any, Callable, Self
 from src.labweb.constants import FlexDirection, HorizontalAlignment, VerticalAlignment
-from src.labweb.containers.clickable_hover_emphasizing_flexbox import ClickableHoverEmphasizingFlexBox
+from src.labweb.containers.clickable_flexbox import ClickableFlexBox
 from src.labweb.containers.flexbox import FlexBox
-from src.labweb.color import Color
+from src.labweb.primitives.color import Color
 
 
-class Button(ClickableHoverEmphasizingFlexBox, FlexBox):
+class Button(ClickableFlexBox, FlexBox):
 
     def __init__(self,
                  width: int,
@@ -18,14 +18,12 @@ class Button(ClickableHoverEmphasizingFlexBox, FlexBox):
                  vertical_alignment: str | VerticalAlignment = VerticalAlignment.CENTER,
                  corners_radius: tuple[int, int, int, int] | int = 0,
                  color: Color | tuple[int, int, int] | str = "BLACK",
-                 hover_emphasis_intensity: int = 100,
                  bounded: bool = True) -> None:
 
         super().__init__(width, height, padding,
                          space_between, flex_direction,
                          horizontal_alignment, vertical_alignment,
-                         corners_radius, color,
-                         hover_emphasis_intensity, bounded)
+                         corners_radius, color, bounded)
         self.__actions: list[Callable[..., Any]] = []
         self.add_actions(actions)
 
@@ -47,11 +45,11 @@ class Button(ClickableHoverEmphasizingFlexBox, FlexBox):
         super().handle_event(*args, **kwargs)
         self.__add_click_listener()
 
-    def copy(self) -> "Button":
+    def copy(self) -> Self:
         new_instance = self.__class__(self.get_width(), self.get_height(), self.get_actions(),
                                       self.get_padding(), self.get_space_between(),
                                       self.get_flex_direction(), self.get_horizontal_alignment(),
                                       self.get_vertical_alignment(), self.get_corners_radius(),
-                                      self.get_color(), self.get_emphasis_intensity(), self.is_bounded())
+                                      self.get_color(), self.is_bounded())
         self._migrate_children(new_instance)
         return new_instance

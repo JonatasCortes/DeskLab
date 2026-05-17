@@ -1,7 +1,7 @@
 from typing import Iterable
 
 from pygame.locals import QUIT
-from src.labweb.color import Color
+from src.labweb.primitives.color import Color
 from src.labweb.containers.flexbox import FlexBox
 from src.labweb.constants import FlexDirection, HorizontalAlignment, VerticalAlignment
 from src.labweb.system.mouse import Mouse

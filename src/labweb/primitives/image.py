@@ -1,4 +1,6 @@
-from src.labweb.entities import DisplayableEntity, ContainableEntity, CopiableEntity
+from src.labweb.entities.displayable import DisplayableEntity
+from src.labweb.entities.containable import ContainableEntity
+from src.labweb.entities.copiable import CopiableEntity
 import numpy as np
 from PIL import Image as PilImage
 from pygame import Surface

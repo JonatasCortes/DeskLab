@@ -1,7 +1,10 @@
 from typing import Optional
 
-from src.labweb.color import Color
-from src.labweb.entities import DisplayableEntity, ContainableEntity, ColorableEntity, CopiableEntity
+from src.labweb.primitives.color import Color
+from src.labweb.entities.displayable import DisplayableEntity
+from src.labweb.entities.containable import ContainableEntity
+from src.labweb.entities.colorable import ColorableEntity
+from src.labweb.entities.copiable import CopiableEntity
 import pygame
 from pygame import Surface
 import os

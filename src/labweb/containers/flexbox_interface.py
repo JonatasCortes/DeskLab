@@ -1,13 +1,17 @@
-from src.labweb.color import Color
-from src.labweb.entities import ContainableEntity, Entity, DisplayableEntity, EventSensitiveEntity, CopiableEntity
-from src.labweb.area import RectangularArea
+from src.labweb.primitives.color import Color
+from src.labweb.entities.entity import Entity
+from src.labweb.entities.containable import ContainableEntity
+from src.labweb.entities.displayable import DisplayableEntity
+from src.labweb.entities.event_sensitive import EventSensitiveEntity
+from src.labweb.entities.copiable import CopiableEntity
+from src.labweb.areas.rectangular_area import RectangularArea
 from pygame import Surface
-from typing import Any, Optional, Union
+from typing import Any, Optional, Union, Self
 from abc import abstractmethod
 from src.labweb.constants import VerticalAlignment, HorizontalAlignment, FlexDirection
 
 
-class FlexContainerInterface(RectangularArea, EventSensitiveEntity):
+class FlexBoxInterface(RectangularArea, EventSensitiveEntity):
     def __init__(self,
                  width: int,
                  height: int,
@@ -105,7 +109,7 @@ class FlexContainerInterface(RectangularArea, EventSensitiveEntity):
     def _index(self, entity: Entity) -> int:
         return self.__children.index(entity)
 
-    def _copy(self) -> 'FlexContainerInterface':
+    def _copy(self) -> Self:
         new_container = self.__class__(
             width=self.get_width(),
             height=self.get_height(),
@@ -121,7 +125,7 @@ class FlexContainerInterface(RectangularArea, EventSensitiveEntity):
         self._migrate_children(new_container)
         return new_container
 
-    def _migrate_children(self, new_instance: "FlexContainerInterface") -> None:
+    def _migrate_children(self, new_instance: "FlexBoxInterface") -> None:
         for children in self._get_children():
             if isinstance(children, CopiableEntity):
                 new_instance._add(children.copy())

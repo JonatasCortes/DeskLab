@@ -1,5 +1,5 @@
 from src.labweb.containers.protected_flexbox import ProtectedFlexBox
-from src.labweb.entities import Entity
+from src.labweb.entities.entity import Entity
 from typing import Optional, Union
 from src.labweb.constants import VerticalAlignment, HorizontalAlignment, FlexDirection
 
@@ -41,8 +41,3 @@ class FlexBox(ProtectedFlexBox):
 
     def insert(self, index: int, entity: Entity) -> None:
         self._insert(index, entity)
-
-    def copy(self) -> "FlexBox":
-        instance = self._copy()
-        assert isinstance(instance, self.__class__)
-        return instance
