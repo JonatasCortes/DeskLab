@@ -19,7 +19,7 @@ class ProtectedFlexBox(FlexBoxInterface):
             return entity.get_height()
 
     def _align(self) -> None:
-        if self._is_empty():
+        if self._is_childless():
             return
 
         main_dimension_sum = self.__get_main_dimension_sum()

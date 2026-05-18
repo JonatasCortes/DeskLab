@@ -32,14 +32,24 @@ class Button(ClickableFlexBox, FlexBox):
             for action in self.get_actions():
                 action()
 
-    def add_actions(self, action: Callable[..., Any] | list[Callable[..., Any]]):
-        if isinstance(action, list):
-            self.__actions = [*self.__actions, *action]
-            return
-        self.__actions.append(action)
+    def set_actions(self, actions: Callable[..., Any] | list[Callable[..., Any]]):
+        if not isinstance(actions, list):
+            actions = [actions]
+        self.__actions = actions
+
+    def add_actions(self, actions: Callable[..., Any] | list[Callable[..., Any]]):
+        if isinstance(actions, Callable):
+            actions = [actions]
+        self.__actions.extend(actions)
 
     def get_actions(self) -> list[Callable[..., Any]]:
-        return self.__actions
+        return self.__actions.copy()
+
+    def remove_actions(self, actions: Callable[..., Any] | list[Callable[..., Any]]) -> None:
+        if isinstance(actions, Callable):
+            actions = [actions]
+        for a in actions:
+            self.__actions.remove(a)
 
     def handle_event(self, *args: Any, **kwargs: Any) -> None:
         super().handle_event(*args, **kwargs)

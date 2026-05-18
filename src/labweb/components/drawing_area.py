@@ -1,7 +1,7 @@
 from typing import Any, Self
 from src.labweb.system.mouse import Mouse
 from src.labweb.primitives.color import Color
-from src.labweb.areas.rectangular_area import RectangularArea
+from src.labweb.areas.clickable_area import ClickableArea
 from src.labweb.entities.event_sensitive import EventSensitiveEntity
 from pygame import Surface
 import pygame
@@ -20,7 +20,7 @@ class _ExecutionState(Enum):
     RUNNING = 1
 
 
-class DrawingArea(RectangularArea, EventSensitiveEntity):
+class DrawingArea(ClickableArea, EventSensitiveEntity):
 
     def __init__(self,
                  width: int,
@@ -82,10 +82,10 @@ class DrawingArea(RectangularArea, EventSensitiveEntity):
     def is_paused(self) -> bool:
         return self.__execution_state == _ExecutionState.PAUSED
 
-    def __update_execution_state(self, mouse: Mouse) -> None:
-        if self.is_paused() and mouse.is_clicked() and self.contains(self.__current_mouse_pos):
+    def __update_execution_state(self) -> None:
+        if self.is_paused() and self.is_held() and self.contains(self.__current_mouse_pos):
             self.__unpause()
-        elif mouse.is_released() or not self.contains(self.__current_mouse_pos):
+        elif not self.contains(self.__current_mouse_pos) or not self.is_held():
             self.__pause()
 
     def copy(self) -> Self:
@@ -126,7 +126,7 @@ class DrawingArea(RectangularArea, EventSensitiveEntity):
 
         self.__current_mouse_pos = mouse.get_position()
 
-        self.__update_execution_state(mouse)
+        self.__update_execution_state()
 
         if self.is_paused():
             return
@@ -141,7 +141,7 @@ class DrawingArea(RectangularArea, EventSensitiveEntity):
             self.__draw_to_canvas(local_pos, (0, 0, 0, 0),
                                   self.get_eraser_width())
         elif self.is_filling():
-            if mouse.is_clicked():
+            if self.is_clicked():
                 self.__canvas.fill(self.get_brush_color().get_tuple())
 
         self.__last_mouse_pos = local_pos

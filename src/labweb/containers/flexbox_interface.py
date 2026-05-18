@@ -87,26 +87,29 @@ class FlexBoxInterface(RectangularArea, EventSensitiveEntity):
             if isinstance(child, EventSensitiveEntity):
                 child.handle_event(*args, **kwargs)
 
-    def _add(self, entity: Union[Entity, list[Entity]]) -> None:
-        if not isinstance(entity, list):
-            entity = [entity]
+    def _add_children(self, children: Union[Entity, list[Entity]]) -> None:
+        if not isinstance(children, list):
+            children = [children]
         try:
-            self.__children.extend(entity)
+            self.__children.extend(children)
             self._align()
         except ValueError as error:
-            for e in entity:
-                self.__children.remove(e)
+            self.__children.clear()
             raise error
 
     def _set_children(self, children: list[Entity]) -> None:
         self.__children = children
         self._align()
 
-    def _insert(self, index: int, entity: Entity) -> None:
-        self.__children.insert(index, entity)
+    def _insert_children(self, index: int, children: Union[Entity, list[Entity]]) -> None:
+        if isinstance(children, list):
+            self.__children = self.__children[:index] + \
+                children + self.__children[index:]
+            return
+        self.__children.insert(index, children)
         self._align()
 
-    def _index(self, entity: Entity) -> int:
+    def _get_child_index(self, entity: Entity) -> int:
         return self.__children.index(entity)
 
     def _copy(self) -> Self:
@@ -128,26 +131,29 @@ class FlexBoxInterface(RectangularArea, EventSensitiveEntity):
     def _migrate_children(self, new_instance: "FlexBoxInterface") -> None:
         for children in self._get_children():
             if isinstance(children, CopiableEntity):
-                new_instance._add(children.copy())
+                new_instance._add_children(children.copy())
             else:
-                new_instance._add(children)
+                new_instance._add_children(children)
 
-    def _remove(self, entity: Entity) -> None:
-        self.__children.remove(entity)
-        self._align()
+    def _remove_children(self, children: Union[Entity, list[Entity]]) -> None:
+        if not isinstance(children, list):
+            children = [children]
+        for child in children:
+            self.__children.remove(child)
+            self._align()
 
-    def _pop(self) -> Optional[Entity]:
+    def _pop_child(self) -> Optional[Entity]:
         if not self.__children:
             return None
-        entity = self.__children.pop()
+        child = self.__children.pop()
         self._align()
-        return entity
+        return child
 
-    def _clear(self) -> None:
+    def _clear_children(self) -> None:
         self.__children.clear()
         self._align()
 
-    def _length(self) -> int:
+    def _count_children(self) -> int:
         return len(self.__children)
 
     def _count_containable_children(self) -> int:
@@ -157,7 +163,7 @@ class FlexBoxInterface(RectangularArea, EventSensitiveEntity):
                 count += 1
         return count
 
-    def _is_empty(self) -> bool:
+    def _is_childless(self) -> bool:
         return not self.__children
 
     def set_x(self, x: int) -> None:

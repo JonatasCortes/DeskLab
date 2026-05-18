@@ -11,12 +11,20 @@ class FlexBox(ProtectedFlexBox):
     def get_space_between(self) -> int: return self._get_space_between()
     def is_bounded(self) -> bool: return self._is_bounded()
     def switch_direction(self) -> None: self._switch_direction()
-    def remove(self, entity: Entity) -> None: self._remove(entity)
-    def pop(self) -> Optional[Entity]: return self._pop()
-    def clear(self) -> None: return self._clear()
-    def length(self) -> int: return self._length()
-    def is_empty(self) -> bool: return self._is_empty()
-    def index(self, entity: Entity) -> int: return self._index(entity)
+    def pop_child(self) -> Optional[Entity]: return self._pop_child()
+    def clear_children(self) -> None: return self._clear_children()
+    def count_children(self) -> int: return self._count_children()
+
+    def remove_children(self, entity: Entity) -> None:
+        self._remove_children(entity)
+
+    def count_containable_children(self) -> int:
+        return self._count_containable_children()
+
+    def is_childless(self) -> bool: return self._is_childless()
+
+    def get_child_index(self, entity: Entity) -> int:
+        return self._get_child_index(entity)
 
     def get_horizontal_alignment(self) -> HorizontalAlignment:
         return self._get_horizontal_alignment()
@@ -33,11 +41,11 @@ class FlexBox(ProtectedFlexBox):
     def set_vertical_alignment(self, vertical_alignment: VerticalAlignment = VerticalAlignment.CENTER) -> None:
         self._set_vertical_alignment(vertical_alignment)
 
-    def add(self, entity: Union[Entity, list[Entity]]) -> None:
-        self._add(entity)
+    def add_children(self, entity: Union[Entity, list[Entity]]) -> None:
+        self._add_children(entity)
 
     def set_children(self, children: list[Entity]) -> None:
         self._set_children(children)
 
-    def insert(self, index: int, entity: Entity) -> None:
-        self._insert(index, entity)
+    def insert_children(self, index: int, entity: Entity) -> None:
+        self._insert_children(index, entity)
