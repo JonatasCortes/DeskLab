@@ -9,12 +9,15 @@ from src.labweb.utils import point_to_segment_distance
 from enum import Enum
 
 
-class _DrawingState(Enum):
+class _DrawingMode(Enum):
     DRAWING = 1
-    DRAWING_PAUSED = 2
-    ERASING = 3
-    ERASING_PAUSED = 4
-    FILLING = 5
+    ERASING = 2
+    FILLING = 3
+
+
+class _ExecutionState(Enum):
+    PAUSED = 0
+    RUNNING = 1
 
 
 class DrawingArea(RectangularArea, EventSensitiveEntity):
@@ -34,7 +37,8 @@ class DrawingArea(RectangularArea, EventSensitiveEntity):
         self.set_eraser_width(eraser_width)
         self.__mouse_positions: list[tuple[int, int]] = []
         self.__drawn_chunks: list[tuple[Color, list[tuple[int, int]]]] = []
-        self.__drawing_state = _DrawingState.DRAWING_PAUSED
+        self.__drawing_mode = _DrawingMode.DRAWING
+        self.__execution_state = _ExecutionState.PAUSED
 
     def clear(self):
         self.__mouse_positions = []
@@ -45,28 +49,25 @@ class DrawingArea(RectangularArea, EventSensitiveEntity):
         self.set_color(self.get_brush_color())
 
     def fill(self):
-        self.__drawing_state = _DrawingState.FILLING
+        self.__drawing_mode = _DrawingMode.FILLING
 
     def is_filling(self) -> bool:
-        return self.__drawing_state == _DrawingState.FILLING
+        return self.__drawing_mode == _DrawingMode.FILLING
 
     def erase(self):
-        self.__drawing_state = _DrawingState.ERASING
+        self.__drawing_mode = _DrawingMode.ERASING
 
     def is_erasing(self) -> bool:
-        return self.__drawing_state == _DrawingState.ERASING
+        return self.__drawing_mode == _DrawingMode.ERASING
 
-    def is_erasing_paused(self) -> bool:
-        return self.__drawing_state == _DrawingState.ERASING_PAUSED
+    def is_paused(self) -> bool:
+        return self.__execution_state == _ExecutionState.PAUSED
 
     def draw(self):
-        self.__drawing_state = _DrawingState.DRAWING
+        self.__drawing_mode = _DrawingMode.DRAWING
 
     def is_drawing(self) -> bool:
-        return self.__drawing_state == _DrawingState.DRAWING
-
-    def is_drawing_paused(self) -> bool:
-        return self.__drawing_state == _DrawingState.DRAWING_PAUSED
+        return self.__drawing_mode == _DrawingMode.DRAWING
 
     def copy(self) -> "DrawingArea":
         return self.__class__(self.get_width(), self.get_height(),
@@ -74,16 +75,10 @@ class DrawingArea(RectangularArea, EventSensitiveEntity):
                               self.get_brush_width(), self.get_eraser_width())
 
     def __pause(self):
-        if self.__drawing_state == _DrawingState.DRAWING:
-            self.__drawing_state = _DrawingState.DRAWING_PAUSED
-        elif self.__drawing_state == _DrawingState.ERASING:
-            self.__drawing_state = _DrawingState.ERASING_PAUSED
+        self.__execution_state = _ExecutionState.PAUSED
 
     def __unpause(self):
-        if self.__drawing_state == _DrawingState.DRAWING_PAUSED:
-            self.__drawing_state = _DrawingState.DRAWING
-        elif self.__drawing_state == _DrawingState.ERASING_PAUSED:
-            self.__drawing_state = _DrawingState.ERASING
+        self.__execution_state = _ExecutionState.RUNNING
 
     def set_brush_width(self, width: int):
         self.__brush_width = self._ensure_not_negative(width)
@@ -106,8 +101,8 @@ class DrawingArea(RectangularArea, EventSensitiveEntity):
     def get_brush_color(self) -> Color:
         return self.__brush_color
 
-    def get_drawing_state(self) -> _DrawingState:
-        return self.__drawing_state
+    def get_drawing_state(self) -> _DrawingMode:
+        return self.__drawing_mode
 
     def handle_event(self, *args: Any, **kwargs: Any) -> None:
         super().handle_event(*args, **kwargs)
@@ -132,8 +127,7 @@ class DrawingArea(RectangularArea, EventSensitiveEntity):
                                self.get_brush_width()//2)
 
     def __update_drawing_state_based_on_mouse_behavior(self, mouse: Mouse):
-        is_paused = self.is_drawing_paused() or self.is_erasing_paused()
-        if is_paused and mouse.is_clicked() and self.contains(mouse.get_position()):
+        if self.is_paused() and mouse.is_clicked() and self.contains(mouse.get_position()):
             self.__unpause()
         elif mouse.is_released() or not self.contains(mouse.get_position()):
             self.__pause()
@@ -142,7 +136,7 @@ class DrawingArea(RectangularArea, EventSensitiveEntity):
 
         self.__update_drawing_state_based_on_mouse_behavior(mouse)
 
-        if self.is_drawing():
+        if self.is_drawing() and not self.is_paused():
             self.__mouse_positions.append(mouse.get_position())
         elif self.__mouse_positions:
             self.__drawn_chunks.append((self.__brush_color,
@@ -162,7 +156,7 @@ class DrawingArea(RectangularArea, EventSensitiveEntity):
     def __add_erasing_listener(self, mouse: Mouse):
 
         self.__update_drawing_state_based_on_mouse_behavior(mouse)
-        if not self.is_erasing():
+        if not self.is_erasing() or self.is_paused():
             return
 
         new_chunks: list[tuple[Color, list[tuple[int, int]]]] = []
