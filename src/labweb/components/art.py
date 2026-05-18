@@ -45,10 +45,6 @@ class DrawingArea(RectangularArea, EventSensitiveEntity):
         self.__mouse_positions = []
         self.__drawn_chunks = []
 
-    def __fill(self):
-        self.clear()
-        self.set_color(self.get_brush_color())
-
     def fill(self):
         self.__drawing_mode = _DrawingMode.FILLING
 
@@ -123,7 +119,7 @@ class DrawingArea(RectangularArea, EventSensitiveEntity):
             return
         if self.is_erasing():
             pygame.draw.circle(screen, self.get_color().luminance_emphasized().get_tuple(),
-                               mouse_pos, self.get_eraser_width())
+                               mouse_pos, self.get_eraser_width()//2)
         elif self.is_drawing():
             pygame.draw.circle(screen, self.get_brush_color().get_tuple(), mouse_pos,
                                self.get_brush_width()//2)
@@ -145,15 +141,6 @@ class DrawingArea(RectangularArea, EventSensitiveEntity):
                                         self.__mouse_positions))
             self.__mouse_positions = []
 
-    def __dynamic_eraser_increment(self) -> int:
-        width = self.get_eraser_width()
-        if width == 0:
-            return 0
-        elif width < 10:
-            return 3
-        else:
-            return int(100/width)
-
     def __add_erasing_listener(self, mouse: Mouse):
 
         self.__update_drawing_state_based_on_mouse_behavior(mouse)
@@ -173,7 +160,7 @@ class DrawingArea(RectangularArea, EventSensitiveEntity):
                 dist = point_to_segment_distance(mouse.get_position(), p1, p2)
 
                 eraser_width = self.get_eraser_width()
-                if eraser_width > 0 and dist <= eraser_width + self.__dynamic_eraser_increment():
+                if eraser_width > 0 and dist - self.get_brush_width()//2 <= eraser_width // 2:
                     split_index = i
                     break
 
@@ -195,6 +182,10 @@ class DrawingArea(RectangularArea, EventSensitiveEntity):
     def __add_filling_listener(self, mouse: Mouse):
         if self.is_filling() and mouse.is_clicked() and self.contains(mouse.get_position()):
             self.__fill()
+
+    def __fill(self):
+        self.clear()
+        self.set_color(self.get_brush_color())
 
     def __draw(self, screen: Surface):
         if not self.__drawn_chunks and not self.__mouse_positions:
