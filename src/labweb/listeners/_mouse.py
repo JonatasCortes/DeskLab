@@ -6,17 +6,18 @@ from ._protected_interface import ProtectedListener
 
 class _MouseListener(ProtectedListener):
 
-    def __init__(self, area: Area, actions: Callable[..., Any] | list[Callable[..., Any]], condition_func: str) -> None:
-        self.__area = area
-        super().__init__(lambda *args, **
-                         kwargs: self.__check_mouse_condition(condition_func, **kwargs), actions)
+    _condition_function: str = ""
 
-    def __check_mouse_condition(self, condition_func: str, **kwargs: Any) -> bool:
+    def __init__(self, area: Area, actions: Callable[..., Any] | list[Callable[..., Any]]) -> None:
+        self.__area = area
+        super().__init__(self.__check_mouse_condition, actions)
+
+    def __check_mouse_condition(self, **kwargs: Any) -> bool:
         mouse = kwargs.get("mouse")
         if not isinstance(mouse, Mouse):
             self._raise_for_missing_parameter("mouse", Mouse.__name__)
 
-        mouse_condition = getattr(mouse, condition_func)()
+        mouse_condition = getattr(mouse, self._condition_function)()
         return mouse_condition and self.__area.contains(mouse.get_position())
 
     def get_actions(self) -> list[Callable[..., Any]]:
@@ -30,10 +31,20 @@ class _MouseListener(ProtectedListener):
 
 
 class MouseClickListener(_MouseListener):
-    def __init__(self, area: Area, actions: Callable[..., Any] | list[Callable[..., Any]]) -> None:
-        super().__init__(area, actions, "is_clicked")
+    _condition_function = "is_clicked"
 
 
 class MouseHoldListener(_MouseListener):
-    def __init__(self, area: Area, actions: Callable[..., Any] | list[Callable[..., Any]]) -> None:
-        super().__init__(area, actions, "is_held")
+    _condition_function = "is_held"
+
+
+class MouseReleaseListener(_MouseListener):
+    _condition_function = "is_released"
+
+
+class MouseMotionListener(_MouseListener):
+    _condition_function = "is_moving"
+
+
+class FileDropListener(_MouseListener):
+    _condition_function = "is_dropping_file"
