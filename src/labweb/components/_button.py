@@ -1,10 +1,11 @@
 from typing import Any, Callable, Self
 from src.labweb.containers import (FlexDirection, HorizontalAlignment,
-                                   VerticalAlignment, ClickableFlexBox)
+                                   VerticalAlignment, FlexBox)
+from src.labweb.areas import ClickableArea
 from src.labweb._primitives import Color
 
 
-class Button(ClickableFlexBox):
+class Button(FlexBox, ClickableArea):
 
     def __init__(self,
                  width: int,

@@ -1,7 +1,11 @@
-import pygame
-from io import BytesIO
-from imageio_ffmpeg import get_ffmpeg_exe  # type: ignore
+# fmt: off
 import subprocess
+from imageio_ffmpeg import get_ffmpeg_exe  # type: ignore
+from io import BytesIO
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+import pygame
+# fmt: on
 
 
 class Audio:

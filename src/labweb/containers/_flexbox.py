@@ -1,7 +1,9 @@
 from src.labweb.entity_types import Entity
-from typing import Optional, Union
+from typing import Callable, Optional, Self, Union, TypeVar
 from ._constants import VerticalAlignment, HorizontalAlignment, FlexDirection
 from ._protected_flexbox import ProtectedFlexBox
+
+T = TypeVar("T")
 
 
 class FlexBox(ProtectedFlexBox):
@@ -14,6 +16,10 @@ class FlexBox(ProtectedFlexBox):
     def pop_child(self) -> Optional[Entity]: return self._pop_child()
     def clear_children(self) -> None: return self._clear_children()
     def count_children(self) -> int: return self._count_children()
+    def copy(self) -> Self: return super()._copy()
+
+    def cascade(self, function: Callable[[Entity], T]) -> list[T]:
+        return self._cascade(function)
 
     def remove_children(self, entity: Entity) -> None:
         self._remove_children(entity)

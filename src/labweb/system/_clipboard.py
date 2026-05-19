@@ -1,18 +1,21 @@
-import pygame
-import numpy as np
-import io
-import os
-import sys
-import pyperclip
-import subprocess
-import tempfile
-from urllib.parse import quote
-from PIL import Image as PilImage
-from typing import Optional, List, Final, no_type_check
-from ._system_input import SystemInput
-from src.labweb.media import Image
-from typing import no_type_check
+# fmt: off
 from abc import ABC, abstractmethod
+from typing import no_type_check
+from src.labweb.media import Image
+from ._system_input import SystemInput
+from typing import Optional, List, Final, no_type_check
+from PIL import Image as PilImage
+from urllib.parse import quote
+import tempfile
+import subprocess
+import pyperclip
+import sys
+import io
+import numpy as np
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+import pygame
+# fmt: on
 
 
 class _ClipBoardBackend(ABC):

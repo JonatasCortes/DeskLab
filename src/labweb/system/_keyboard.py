@@ -1,13 +1,17 @@
-from typing import Optional, Set
+# fmt: off
 from ._system_input import SystemInput
-from pygame.event import Event
+from typing import Optional, Set
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
+from pygame.event import Event
 from pygame.constants import (
     K_BACKSPACE, K_ESCAPE, K_LALT, K_LCTRL, K_LSHIFT,
     K_RALT, K_RCTRL, K_RETURN, K_RSHIFT, K_SPACE, K_TAB,
     KEYDOWN, KEYUP, TEXTINPUT, KMOD_CTRL, KMOD_SHIFT,
     KMOD_ALT, KMOD_META
 )
+# fmt: on
 
 
 class _PygameKeyMapper:
@@ -85,24 +89,30 @@ class KeyBoard(SystemInput):
             return None
         return self.__buffer[-1]
 
-    def key_pressed(self, key: str) -> bool:
-        key_values = self.__key_mapper.get_key(key)
-        return any(k in self.__pressed_keys for k in key_values)
+    def key_pressed(self, keys: str | list[str]) -> bool:
+        if isinstance(keys, str):
+            keys = [keys]
+        for key in keys:
+            key_values = self.__key_mapper.get_key(key)
+            if any(k in self.__pressed_keys for k in key_values):
+                return True
+        return False
 
-    def __key_events(self, key: str, event_type: int) -> bool:
-        key = key.lower()
-        key_values = self.__key_mapper.get_key(key)
-        return (
-            self.__event is not None and
-            self.__event.type == event_type and
-            any(k == self.__event.key for k in key_values)
-        )
+    def __key_events(self, keys: str | list[str], event_type: int) -> bool:
+        if isinstance(keys, str):
+            keys = [keys]
+        for key in keys:
+            key = key.lower()
+            key_values = self.__key_mapper.get_key(key)
+            if self.__event is not None and self.__event.type == event_type and self.__event.key in key_values:
+                return True
+        return False
 
-    def key_down(self, key: str) -> bool:
-        return self.__key_events(key, KEYDOWN)
+    def key_down(self, keys: str | list[str]) -> bool:
+        return self.__key_events(keys, KEYDOWN)
 
-    def key_up(self, key: str) -> bool:
-        return self.__key_events(key, KEYUP)
+    def key_up(self, keys: str | list[str]) -> bool:
+        return self.__key_events(keys, KEYUP)
 
     def __is_event_type(self, type: int) -> bool:
         if self.__event and self.__event.type == type:

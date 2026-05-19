@@ -1,10 +1,12 @@
-from typing import Optional
-
-from src.labweb._primitives import Color
+# fmt: off
 from src.labweb.areas import ClickableArea
+from src.labweb._primitives import Color
+from typing import Optional
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 from pygame import Surface
-import os
+# fmt: on
 
 
 class _FontMapper:
@@ -126,9 +128,6 @@ class Text(ClickableArea):
     def is_empty(self) -> bool: return self.get_text() == ""
     def get_font_path(self) -> Optional[str]: return self.__font_path
     def get_font(self) -> pygame.font.Font: return self.__font
-
-    def set_color(self, color: Color | tuple[int, ...] | str):
-        return super()._set_color(color)
 
     def set_size(self, size: int) -> None:
         if size < 0:

@@ -1,8 +1,12 @@
-from pynput import mouse
-from ._system_input import SystemInput
+# fmt: off
 from typing import Optional
+from ._system_input import SystemInput
+from pynput import mouse
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 from pygame.event import Event
 from pygame.constants import MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, DROPFILE
+# fmt: on
 
 
 class Mouse(SystemInput):

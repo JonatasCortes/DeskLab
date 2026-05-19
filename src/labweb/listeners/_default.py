@@ -1,15 +1,15 @@
-from ._protected_interface import ProtectedListener
+from ._protected_listener import ProtectedListener
 from typing import Callable, Any
 from typing import Any, Callable
 
 
 class Listener(ProtectedListener):
 
-    def get_condition(self) -> Callable[..., bool]:
-        return self._get_condition()
+    def get_condition(self) -> list[Callable[..., bool]]:
+        return self._get_conditions()
 
-    def set_condition(self, condition: Callable[..., bool]) -> None:
-        return self._set_condition(condition)
+    def set_condition(self, condition: Callable[..., bool] | list[Callable[..., bool]]) -> None:
+        return self._set_conditions(condition)
 
     def get_actions(self) -> list[Callable[..., Any]]:
         return self._get_actions()

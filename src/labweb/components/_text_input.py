@@ -1,11 +1,15 @@
-import pygame
-import time
-import re
-from typing import Any, Optional, Union, Tuple, Final
-from pygame import Surface, Rect
-from ._text import Color, Text
-from src.labweb.system import Mouse, KeyBoard, ClipBoard
+# fmt: off
 from src.labweb.areas import ClickableArea
+from src.labweb.system import Mouse, KeyBoard, ClipBoard
+from ._text import Color, Text
+from typing import Any, Optional, Union, Tuple, Final
+import re
+import time
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+import pygame
+from pygame import Surface, Rect
+# fmt: on
 
 
 class TextInput(ClickableArea):

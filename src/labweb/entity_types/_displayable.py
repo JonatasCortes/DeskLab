@@ -1,6 +1,10 @@
-from ._entity import Entity
+# fmt: off
 from abc import abstractmethod
+from ._entity import Entity
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 from pygame import Surface
+# fmt: on
 
 
 class DisplayableEntity(Entity):

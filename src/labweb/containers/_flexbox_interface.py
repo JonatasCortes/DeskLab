@@ -1,10 +1,17 @@
-from src.labweb._primitives import Color
-from src.labweb.entity_types import Entity, ContainableEntity, DisplayableEntity, EventSensitiveEntity, CopiableEntity
-from src.labweb.areas import RectangularArea
-from pygame import Surface
-from typing import Any, Optional, Union, Self
-from abc import abstractmethod
+# fmt: off
 from ._constants import VerticalAlignment, HorizontalAlignment, FlexDirection
+from abc import abstractmethod
+from typing import Any, Callable, Optional, Union, Self, TypeVar
+from src.labweb.areas import RectangularArea
+from src.labweb.entity_types import Entity, ContainableEntity, DisplayableEntity, EventSensitiveEntity, CopiableEntity
+from src.labweb._primitives import Color
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+from pygame import Surface
+# fmt: on
+
+
+T = TypeVar("T")
 
 
 class FlexBoxInterface(RectangularArea, EventSensitiveEntity):
@@ -130,6 +137,16 @@ class FlexBoxInterface(RectangularArea, EventSensitiveEntity):
                 new_instance._add_children(children.copy())
             else:
                 new_instance._add_children(children)
+
+    def _cascade(self, function: Callable[[Entity], T]) -> list[T]:
+        results: list[T] = []
+        for child in self._get_children():
+            if isinstance(child, FlexBoxInterface):
+                results.extend(child._cascade(function))
+            else:
+                results.append(function(child))
+        results.append(function(self))
+        return results
 
     def _remove_children(self, children: Union[Entity, list[Entity]]) -> None:
         if not isinstance(children, list):

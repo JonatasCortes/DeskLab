@@ -7,9 +7,9 @@ class ColorableEntity(Entity):
 
     def __init__(self, color: Color | tuple[int, ...] | str, **kwargs: Any) -> None:
         super().__init__(**kwargs)
-        self._set_color(color)
+        self.set_color(color)
 
-    def _set_color(self, color: Color | tuple[int, ...] | str):
+    def set_color(self, color: Color | tuple[int, ...] | str):
         if isinstance(color, Color):
             self.__color = color
         else:

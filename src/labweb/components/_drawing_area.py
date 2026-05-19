@@ -1,12 +1,16 @@
-from typing import Any, Self
-from src.labweb.system import Mouse
-from src.labweb._primitives import Color
-from src.labweb.areas import ClickableArea
-from src.labweb.entity_types import EventSensitiveEntity
-from pygame import Surface
-import pygame
-from enum import Enum
+# fmt: off
 import math
+from enum import Enum
+from src.labweb.entity_types import EventSensitiveEntity
+from src.labweb.areas import ClickableArea
+from src.labweb._primitives import Color
+from src.labweb.system import Mouse
+from typing import Any, Self
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+import pygame
+from pygame import Surface
+# fmt: on
 
 
 class _DrawingMode(Enum):
