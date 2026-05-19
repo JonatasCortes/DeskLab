@@ -1,10 +1,14 @@
-from src.labweb._primitives import Color
-from src.labweb.entity_types import Entity, ContainableEntity, DisplayableEntity, EventSensitiveEntity, CopiableEntity
-from src.labweb.areas import RectangularArea
-from pygame import Surface
-from typing import Any, Callable, Optional, Union, Self, TypeVar
-from abc import abstractmethod
+# fmt: off
 from ._constants import VerticalAlignment, HorizontalAlignment, FlexDirection
+from abc import abstractmethod
+from typing import Any, Callable, Optional, Union, Self, TypeVar
+from src.labweb.areas import RectangularArea
+from src.labweb.entity_types import Entity, ContainableEntity, DisplayableEntity, EventSensitiveEntity, CopiableEntity
+from src.labweb._primitives import Color
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+from pygame import Surface
+# fmt: on
 
 
 T = TypeVar("T")

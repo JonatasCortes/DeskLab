@@ -1,8 +1,12 @@
-from src.labweb.entity_types import DisplayableEntity, ContainableEntity, CopiableEntity
-import numpy as np
+# fmt: off
 from PIL import Image as PilImage
-from pygame import Surface
+import numpy as np
+from src.labweb.entity_types import DisplayableEntity, ContainableEntity, CopiableEntity
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
+from pygame import Surface
+# fmt: on
 
 
 class Image(DisplayableEntity, ContainableEntity, CopiableEntity):

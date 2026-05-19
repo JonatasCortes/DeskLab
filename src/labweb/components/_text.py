@@ -1,10 +1,12 @@
-from typing import Optional
-
-from src.labweb._primitives import Color
+# fmt: off
 from src.labweb.areas import ClickableArea
+from src.labweb._primitives import Color
+from typing import Optional
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 from pygame import Surface
-import os
+# fmt: on
 
 
 class _FontMapper:

@@ -1,13 +1,17 @@
-from typing import Optional, Set
+# fmt: off
 from ._system_input import SystemInput
-from pygame.event import Event
+from typing import Optional, Set
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
+from pygame.event import Event
 from pygame.constants import (
     K_BACKSPACE, K_ESCAPE, K_LALT, K_LCTRL, K_LSHIFT,
     K_RALT, K_RCTRL, K_RETURN, K_RSHIFT, K_SPACE, K_TAB,
     KEYDOWN, KEYUP, TEXTINPUT, KMOD_CTRL, KMOD_SHIFT,
     KMOD_ALT, KMOD_META
 )
+# fmt: on
 
 
 class _PygameKeyMapper:

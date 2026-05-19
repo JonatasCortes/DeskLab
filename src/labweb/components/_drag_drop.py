@@ -1,8 +1,12 @@
-from src.labweb.containers import FlexBox, FlexDirection, HorizontalAlignment, VerticalAlignment
-from src.labweb.system import Mouse
-from pygame.event import Event
-from typing import Any
+# fmt: off
 from src.labweb._primitives import Color
+from typing import Any
+from src.labweb.system import Mouse
+from src.labweb.containers import FlexBox, FlexDirection, HorizontalAlignment, VerticalAlignment
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+from pygame.event import Event
+# fmt: on
 
 
 class DragDrop(FlexBox):

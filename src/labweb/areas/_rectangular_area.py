@@ -1,10 +1,13 @@
-from typing import Self
-
-from src.labweb._primitives import Color
-from ._interface import Area
+# fmt: off
 from src.labweb._utils import is_inside_circle
-from pygame import Surface
+from ._interface import Area
+from src.labweb._primitives import Color
+from typing import Self
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
+from pygame import Surface
+# fmt: on
 
 
 class RectangularArea(Area):

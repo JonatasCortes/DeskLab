@@ -1,12 +1,16 @@
-from typing import Iterable
-
-from pygame.locals import QUIT
-from src.labweb._primitives import Color
-from src.labweb.containers import FlexBox, FlexDirection, HorizontalAlignment, VerticalAlignment
-from src.labweb.system import Mouse, KeyBoard, ClipBoard
-from pygame._sdl2 import Window as PygameWindow
-import pygame
+# fmt: off
 import sys
+from pygame._sdl2 import Window as PygameWindow
+from src.labweb.system import Mouse, KeyBoard, ClipBoard
+from src.labweb.containers import FlexBox, FlexDirection, HorizontalAlignment, VerticalAlignment
+from src.labweb._primitives import Color
+from pygame.locals import QUIT
+from typing import Iterable
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+import pygame
+from importlib import resources
+# fmt: on
 
 
 class Window(FlexBox):
@@ -30,7 +34,13 @@ class Window(FlexBox):
                          corners_radius=0, color=color, bounded=True)
 
     @classmethod
-    def setup(cls, width: int = 640, height: int = 480, caption: str = "LabWeb") -> None:
+    def setup(cls, width: int = 640, height: int = 480, caption: str = "LabWeb", icon: str | None = None) -> None:
+        if icon is None:
+            assets = resources.files('labweb._assets')
+            icon_path = assets.joinpath('labweb.png')
+            with resources.as_file(icon_path) as labweb_icon:
+                icon = str(labweb_icon)
+        pygame.display.set_icon(pygame.image.load(icon))
         pygame.init()
         cls.__screen = pygame.display.set_mode((width, height))
         cls.__clock = pygame.time.Clock()
