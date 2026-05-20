@@ -3,18 +3,17 @@ requires = ["setuptools>=61.0.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "labweb"
+name = "desklab"
 version = "0.1.0"
 description = "Biblioteca de interfaces simples e rápidas"
 readme = "README.md"
-requires-python = ">=3.10"
-license = {text = "MIT"} # Ajuste a licença se preferir outra
+requires-python = ">=3.11"
+license = {text = "MIT"}
 authors = [
     {name = "Jonatas Cortes"}
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -32,10 +31,11 @@ dependencies = [
     "pyobjc-framework-Quartz==12.1; sys_platform == 'darwin'",
     "pyperclip==1.11.0",
     "six==1.17.0",
+    "imageio-ffmpeg>=0.6.0,<0.7.0"
 ]
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools.package-data]
-"labweb._assets" = ["*"]
+"desklab._assets" = ["*"]

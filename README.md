@@ -1,5 +1,6 @@
-# LabWeb 🧪
-LabWeb is a lightweight, ready-to-use Python interface library designed for small projects that prioritize fast development over extensive customization. It simulates the web development programing style, with separation of responsibilities and reusable components.
+![DeskLab-banner](./desklab_banner.png)
+
+DeskLab is a lightweight, ready-to-use Python interface library designed for small projects that prioritize fast development over extensive customization. It simulates the web development programing style, with separation of responsibilities and reusable components.
 
 ---
 
@@ -64,8 +65,8 @@ uv --version
 Clone the project and enter its directory:
 
 ```bash
-git clone https://github.com/your-username/labweb.git
-cd labweb
+git clone https://github.com/your-username/desklab.git
+cd desklab
 ```
 
 ---
@@ -84,7 +85,7 @@ This command automatically:
 
 - Creates a local virtual environment (`.venv/`)
 - Installs all project dependencies
-- Installs LabWeb in editable mode
+- Installs desklab in editable mode
 - Synchronizes dependencies from `pyproject.toml`
 
 ---
@@ -104,11 +105,11 @@ This guarantees execution inside the project's environment and avoids dependency
 ## 📂 Project Structure
 
 ```text
-labweb/
+desklab/
 ├── pyproject.toml
 ├── README.md
 └── src/
-    └── labweb/
+    └── desklab/
         ├── ...
 ```
 
