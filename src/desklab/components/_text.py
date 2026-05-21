@@ -1,7 +1,7 @@
 # fmt: off
 from src.desklab.areas import ClickableArea
 from src.desklab._primitives import Color
-from typing import Optional, Self
+from typing import Any, Optional, Self
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
@@ -65,15 +65,25 @@ class Text(ClickableArea):
         super().__init__(self.get_width(), self.get_height(), color, 0)
 
     def __add__(self, other: str | Self):
-        copy = self.copy()
         if isinstance(other, Text):
-            copy.set_text(copy.get_text() + other.get_text())
-        else:
-            copy.set_text(copy.get_text() + other)
-        return copy
+            other = other.get_text()
+        return self.copy(self.get_text() + other)
+
+    def __sub__(self, other: str | Self):
+        if isinstance(other, Text):
+            other = other.get_text()
+        raw_text = self.get_text()
+        text = raw_text.replace(other, "")
+        return self.copy(text)
 
     def __len__(self):
-        return len(self.__text)
+        return len(self.get_text())
+
+    def __bool__(self):
+        return not self.is_empty()
+
+    def __getitem__(self, key: int | slice):
+        return self.copy(self.get_text()[key])
 
     def get_text(self) -> str: return self.__text
     def get_size(self) -> int: return self.__size
@@ -159,8 +169,9 @@ class Text(ClickableArea):
         text_rect = text_surface.get_rect(center=(self.get_x(), self.get_y()))
         screen.blit(text_surface, text_rect)
 
-    def copy(self) -> Self:
-        return self.__class__(text=self.get_text(),
+    def copy(self, replace_text: str | None = None, *args: Any, **kwargs: Any) -> Self:
+        text = replace_text if replace_text is not None else self.get_text()
+        return self.__class__(text=text,
                               size=self.get_size(),
                               color=self.get_color(),
                               font=self.__font_name,
@@ -169,9 +180,4 @@ class Text(ClickableArea):
 
     def sub(self, start: int | None = None, end: int | None = None) -> Self:
         end = end+1 if end else None
-        return self.__class__(text=self.get_text()[start:end],
-                              size=self.get_size(),
-                              color=self.get_color(),
-                              font=self.__font_name,
-                              bold=self.is_bold(),
-                              italic=self.is_italic())
+        return self.copy(self.get_text()[start:end])
