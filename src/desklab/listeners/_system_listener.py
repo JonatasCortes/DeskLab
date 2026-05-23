@@ -40,3 +40,11 @@ class SystemListener(ProtectedListener):
 
     def add_actions(self, actions: Callable[..., Any] | list[Callable[..., Any]]) -> None:
         return self._add_actions(actions)
+
+    def _get_copy_replacement_map(self) -> dict[str, Any]:
+        return {
+            "actions": self._get_actions(),
+            "aditional_conditions": self._get_conditions()[1:],
+            "on_change": self._on_change,
+            "listen_once": self._listen_once
+        }

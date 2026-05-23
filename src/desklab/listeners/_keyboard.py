@@ -21,6 +21,11 @@ class _KeyValueDependentListener(_KeyboardListener):
     def handle_event(self, *args: Any, **kwargs: Any) -> None:
         return super().handle_event(*args, **kwargs, keys=self.__keys)
 
+    def _get_copy_replacement_map(self) -> dict[str, Any]:
+        replace = super()._get_copy_replacement_map()
+        replace["keys"] = self.__keys
+        return replace
+
 
 class KeyPressedListener(_KeyValueDependentListener):
     _condition_function = "key_pressed"

@@ -1,44 +1,44 @@
 from typing import Callable, Any
-from desklab.entity_types import EventSensitiveEntity
+from desklab.entity_types import EventSensitiveEntity, CopiableEntity
 from typing import Any, Callable
 
 
-class ProtectedListener(EventSensitiveEntity):
+class ProtectedListener(EventSensitiveEntity, CopiableEntity):
 
     def __init__(self,
                  condition: Callable[..., Any] | list[Callable[..., Any]],
                  actions: Callable[..., Any] | list[Callable[..., Any]],
                  on_change: bool = False, listen_once: bool = False) -> None:
-        self.__listen_once = listen_once
-        self.__has_triggered = False
-        self.__on_change = on_change
-        self.__previous_state = None
+        self._listen_once = listen_once
+        self._has_triggered = False
+        self._on_change = on_change
+        self._previous_state = None
         self._set_actions(actions)
         self._set_conditions(condition)
 
     def handle_event(self, *args: Any, **kwargs: Any) -> None:
         super().handle_event(*args, **kwargs)
 
-        if self.__listen_once and self.__has_triggered:
+        if self._listen_once and self._has_triggered:
             return
 
         condition_value = self._trigger_conditions(*args, **kwargs)
 
-        if self.__on_change:
+        if self._on_change:
             should_trigger = (
-                self.__previous_state is not None
-                and condition_value != self.__previous_state
+                self._previous_state is not None
+                and condition_value != self._previous_state
             )
         else:
             should_trigger = condition_value
 
-        self.__previous_state = condition_value
+        self._previous_state = condition_value
 
         if should_trigger:
             self._trigger_actions(*args, **kwargs)
 
-            if self.__listen_once:
-                self.__has_triggered = True
+            if self._listen_once:
+                self._has_triggered = True
 
     def _get_conditions(self) -> list[Callable[..., Any]]:
         return self.__conditions
@@ -79,3 +79,11 @@ class ProtectedListener(EventSensitiveEntity):
                 action(*args, **kwargs)
             except TypeError:
                 return action()
+
+    def _get_copy_replacement_map(self) -> dict[str, Any]:
+        return {
+            "condition": self._get_conditions(),
+            "actions": self._get_actions(),
+            "on_change": self._on_change,
+            "listen_once": self._listen_once
+        }

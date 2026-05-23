@@ -27,3 +27,12 @@ class HoverListener(ProtectedListener):
         if not isinstance(mouse, Mouse):
             self._raise_for_missing_parameter("mouse", Mouse.__name__)
         return self.__area.contains(mouse.get_position())
+
+    def _get_copy_replacement_map(self) -> dict[str, Any]:
+        return {
+            "area": self.__area,
+            "actions": self._get_actions(),
+            "aditional_conditions": self._get_conditions()[1:],
+            "on_change": self._on_change,
+            "listen_once": self._listen_once
+        }
