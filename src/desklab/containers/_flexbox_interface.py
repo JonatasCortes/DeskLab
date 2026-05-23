@@ -115,21 +115,24 @@ class FlexBoxInterface(RectangularArea, EventSensitiveEntity):
     def _get_child_index(self, entity: Entity) -> int:
         return self.__children.index(entity)
 
-    def _copy(self) -> Self:
-        new_container = self.__class__(
-            width=self.get_width(),
-            height=self.get_height(),
-            padding=self._get_padding(),
-            space_between=self._get_space_between(),
-            flex_direction=self._get_flex_direction(),
-            horizontal_alignment=self._get_horizontal_alignment(),
-            vertical_alignment=self._get_vertical_alignment(),
-            corners_radius=self.get_corners_radius(),
-            color=self.get_color(),
-            bounded=self._is_bounded()
-        )
-        self._migrate_children(new_container)
-        return new_container
+    def _get_copy_replacement_map(self) -> dict[str, Any]:
+        return {
+            "width": self.get_width(),
+            "height": self.get_height(),
+            "padding": self._get_padding(),
+            "space_between": self._get_space_between(),
+            "flex_direction": self._get_flex_direction(),
+            "horizontal_alignment": self._get_horizontal_alignment(),
+            "vertical_alignment": self._get_vertical_alignment(),
+            "corners_radius": self.get_corners_radius(),
+            "color": self.get_color(),
+            "bounded": self._is_bounded()
+        }
+
+    def copy(self, **kwargs: Any) -> Self:
+        copy = super().copy(**kwargs)
+        self._migrate_children(copy)
+        return copy
 
     def _migrate_children(self, new_instance: "FlexBoxInterface") -> None:
         for children in self._get_children():

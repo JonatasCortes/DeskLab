@@ -345,3 +345,12 @@ class TextInput(ClickableArea):
 
     def get_text(self) -> str:
         return self.__text.get_text()
+
+    def _get_copy_replacement_map(self) -> dict[str, Any]:
+        return {
+            "width": self.get_width(),
+            "height": self.get_height(),
+            "font": self.__font,
+            "text_color": self.__text_color,
+            "corners_radius": self.get_corners_radius(),
+            "background_color": self.get_color()}

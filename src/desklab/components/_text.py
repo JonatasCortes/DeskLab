@@ -26,14 +26,14 @@ class Text(ClickableArea):
     def __add__(self, other: str | Self):
         if isinstance(other, Text):
             other = other.get_text()
-        return self.copy(self.get_text() + other)
+        return self.copy(text=self.get_text() + other)
 
     def __sub__(self, other: str | Self):
         if isinstance(other, Text):
             other = other.get_text()
         raw_text = self.get_text()
         text = raw_text.replace(other, "")
-        return self.copy(text)
+        return self.copy(text=text)
 
     def __len__(self):
         return len(self.get_text())
@@ -42,7 +42,7 @@ class Text(ClickableArea):
         return not self.is_empty()
 
     def __getitem__(self, key: int | slice):
-        return self.copy(self.get_text()[key])
+        return self.copy(text=self.get_text()[key])
 
     def get_text(self) -> str: return self.__text
     def __fix_x(self, x: int) -> int: return x + self.get_width()//2
@@ -104,15 +104,12 @@ class Text(ClickableArea):
         text_rect = text_surface.get_rect(center=(self.get_x(), self.get_y()))
         screen.blit(text_surface, text_rect)
 
-    def copy(self,
-             replace_text: Optional[str] = None,
-             replace_font: Optional[Font] = None,
-             replace_color: Optional[Color] = None,
-             *args: Any, **kwargs: Any) -> Self:
-        text = replace_text if replace_text is not None else self.get_text()
-        font = replace_font if replace_font is not None else self.get_font()
-        color = replace_color if replace_color is not None else self.get_color()
-        return self.__class__(text=text, font=font, color=color)
+    def _get_copy_replacement_map(self) -> dict[str, Any]:
+        return {
+            "text": self.get_text(),
+            "font": self.get_font(),
+            "color": self.get_color()
+        }
 
     def sub(self, start: int | None = None, end: int | None = None) -> Self:
-        return self.copy(self.get_text()[start:end])
+        return self.copy(text=self.get_text()[start:end])

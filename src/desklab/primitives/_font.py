@@ -1,5 +1,5 @@
 import os
-from typing import Any, Optional, Self
+from typing import Any, Optional
 from desklab.entity_types._copiable import CopiableEntity
 import pygame
 
@@ -82,9 +82,10 @@ class Font(CopiableEntity):
     def get_available_fonts(cls) -> list[str]:
         return list(cls.__FONT_MAP.keys())
 
-    def copy(self, replace_font: Optional[str] = None, replace_size: Optional[int] = None, replace_bold: Optional[bool] = None, replace_italic: Optional[bool] = None, *args: Any, **kwargs: Any) -> Self:
-        font = replace_font if replace_font is not None else self.__font_path
-        size = replace_size if replace_size is not None else self.get_size()
-        bold = replace_bold if replace_bold is not None else self.get_bold_status()
-        italic = replace_italic if replace_italic is not None else self.get_italic_status()
-        return self.__class__(font=font, size=size, bold=bold, italic=italic)
+    def _get_copy_replacement_map(self) -> dict[str, Any]:
+        return {
+            "font": self.__font_path,
+            "size": self.get_size(),
+            "bold": self.get_bold_status(),
+            "italic": self.get_italic_status()
+        }

@@ -92,13 +92,21 @@ class DrawingArea(ClickableArea, EventSensitiveEntity):
         elif not self.contains(self.__current_mouse_pos) or not self.is_held():
             self.__pause()
 
-    def copy(self) -> Self:
-        new_instance = self.__class__(self.get_width(), self.get_height(),
-                                      self.get_corners_radius(),
-                                      self.get_color(), self.get_brush_color(),
-                                      self.get_brush_width(), self.get_eraser_width())
-        new_instance._put_canvas(self.__canvas)
-        return new_instance
+    def _get_copy_replacement_map(self) -> dict[str, Any]:
+        return {
+            "width": self.get_width(),
+            "height": self.get_height(),
+            "corners_radius": self.get_corners_radius(),
+            "background_color": self.get_color(),
+            "brush_color": self.get_brush_color(),
+            "brush_width": self.get_brush_width(),
+            "eraser_width": self.get_eraser_width()
+        }
+
+    def copy(self, **kwargs: Any) -> Self:
+        copy = super().copy(**kwargs)
+        copy._put_canvas(self.__canvas)
+        return copy
 
     def set_brush_width(self, width: int):
         self.__brush_width = self._ensure_not_negative(width)

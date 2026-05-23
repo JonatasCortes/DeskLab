@@ -1,4 +1,4 @@
-from typing import Any, Callable, Self
+from typing import Any, Callable
 from desklab.containers import (FlexDirection, HorizontalAlignment,
                                 VerticalAlignment, FlexBox)
 from desklab.areas import ClickableArea
@@ -55,11 +55,7 @@ class Button(FlexBox, ClickableArea):
         super().handle_event(*args, **kwargs)
         self.__add_click_listener()
 
-    def copy(self) -> Self:
-        new_instance = self.__class__(self.get_width(), self.get_height(), self.get_actions(),
-                                      self.get_padding(), self.get_space_between(),
-                                      self.get_flex_direction(), self.get_horizontal_alignment(),
-                                      self.get_vertical_alignment(), self.get_corners_radius(),
-                                      self.get_color(), self.is_bounded())
-        self._migrate_children(new_instance)
-        return new_instance
+    def _get_copy_replacement_map(self) -> dict[str, Any]:
+        replace = super()._get_copy_replacement_map()
+        replace["actions"] = self.get_actions()
+        return replace

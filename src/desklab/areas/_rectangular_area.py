@@ -2,7 +2,7 @@
 from desklab._utils import is_inside_circle
 from ._interface import Area
 from desklab.primitives import Color
-from typing import Self
+from typing import Any
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
@@ -92,6 +92,10 @@ class RectangularArea(Area):
                          border_bottom_left_radius=corners[2],
                          border_bottom_right_radius=corners[3])
 
-    def copy(self) -> Self:
-        return self.__class__(self.get_width(), self.get_height(),
-                              self.get_color(), self.get_corners_radius())
+    def _get_copy_replacement_map(self) -> dict[str, Any]:
+        return {
+            "width": self.get_width(),
+            "height": self.get_height(),
+            "color": self.get_color(),
+            "corners_radius": self.get_corners_radius()
+        }

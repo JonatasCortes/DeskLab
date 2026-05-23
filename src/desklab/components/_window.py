@@ -5,7 +5,7 @@ from desklab.system import Mouse, KeyBoard, ClipBoard
 from desklab.containers import FlexBox, FlexDirection, HorizontalAlignment, VerticalAlignment
 from desklab.primitives import Color
 from pygame.locals import QUIT
-from typing import Iterable
+from typing import Any, Iterable
 import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
@@ -94,3 +94,13 @@ class Window(FlexBox):
 
     def close(self) -> None:
         self.__running = False
+
+    def _get_copy_replacement_map(self) -> dict[str, Any]:
+        return {
+            "padding": self.get_padding(),
+            "space_between": self.get_space_between(),
+            "flex_direction": self.get_flex_direction(),
+            "horizontal_alignment": self.get_horizontal_alignment(),
+            "vertical_alignment": self.get_vertical_alignment(),
+            "color": self.get_color()
+        }

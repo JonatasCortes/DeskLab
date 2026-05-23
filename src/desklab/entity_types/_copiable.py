@@ -6,6 +6,14 @@ from typing import Any, Self
 class CopiableEntity(Entity):
 
     @abstractmethod
-    def copy(self, *args: Any, **kwargs: Any) -> Self:
-        error = f"ERROR: 'copy' can't be called directly from {self.__class__.__name__}"
-        raise NotImplementedError(error)
+    def _get_copy_replacement_map(self) -> dict[str, Any]:
+        pass
+
+    def copy(self, **kwargs: Any) -> Self:
+        params = self._get_copy_replacement_map()
+
+        for key, value in kwargs.items():
+            if value is not None:
+                params[key] = value
+
+        return self.__class__(**params)

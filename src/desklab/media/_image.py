@@ -1,4 +1,6 @@
 # fmt: off
+from typing import Any
+
 from PIL import Image as PilImage
 import numpy as np
 from desklab.entity_types import DisplayableEntity, ContainableEntity, CopiableEntity
@@ -48,5 +50,5 @@ class Image(DisplayableEntity, ContainableEntity, CopiableEntity):
     def display(self, screen: Surface) -> None:
         screen.blit(self.__image_surface, (self.get_x(), self.get_y()))
 
-    def copy(self) -> "Image":
-        return self.__class__(self.get_matrix().copy())
+    def _get_copy_replacement_map(self) -> dict[str, Any]:
+        return {"image": self.get_matrix().copy()}
